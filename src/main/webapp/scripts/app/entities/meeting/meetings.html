@@ -1,0 +1,226 @@
+
+<h2 translate="lobbycalApp.meeting.home.title">Meetings</h2>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-2">
+			<button has-role="ROLE_USER" class="btn btn-primary"
+				data-toggle="modal" data-target="#saveMeetingModal"
+				ng-click="clear()">
+				<span class="glyphicon glyphicon-flash"></span> <span
+					translate="lobbycalApp.meeting.home.createLabel">Create a new
+					Meeting</span>
+			</button>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="saveMeetingModal" tabindex="-1"
+	role="dialog" aria-labelledby="myMeetingLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form name="editForm" role="form" novalidate ng-submit="save()">
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true" ng-click="clear()">&times;</button>
+					<h4 class="modal-title" id="myMeetingLabel"
+						translate="lobbycalApp.meeting.home.createOrEditLabel">Create
+						or edit a Meeting</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>ID</label> <input type="text" class="form-control"
+							name="id" ng-model="meeting.id" readonly>
+					</div>
+
+					<div class="form-group">
+						<label translate="lobbycalApp.meeting.title">Title</label> <input
+							type="text" class="form-control" name="title"
+							ng-model="meeting.title">
+
+					</div>
+					<div class="form-group">
+						<label translate="lobbycalApp.meeting.submitter">Submitter</label>
+						<input type="text" class="form-control" name="submitter"
+							ng-model="meeting.submitter">
+
+					</div>
+					<div class="form-group">
+						<label translate="lobbycalApp.meeting.aliasUsed">Alias</label> <input
+							type="text" class="form-control" name="aliasUsed"
+							ng-model="meeting.aliasUsed">
+
+					</div>
+					<div class="form-group">
+						<label translate="lobbycalApp.meeting.startDate">Start </label> <input
+							type="datetime-local" class="form-control" name="startDate"
+							ng-model="meeting.startDate" ng-model-options="{timezone: 'UTC'}">
+
+					</div>
+					<div class="form-group">
+						<label translate="lobbycalApp.meeting.endDate">End </label> <input
+							type="datetime-local" class="form-control" name="endDate"
+							ng-model="meeting.endDate" ng-model-options="{timezone: 'BST'}">
+
+					</div>
+					<!--  <div class="form-group">
+                            <label translate="lobbycalApp.meeting.uid">Uid</label>
+                            <input type="text" class="form-control" name="uid"
+                                   ng-model="meeting.uid">
+                    </div> -->
+
+					<div class="form-group">
+						<label translate="lobbycalApp.meeting.mTag"><span
+							class="glyphicon glyphicon-tags">mTag</span></label>*<input typ="text"
+							class="form-control" name="mTag" ng-model="meeting.mTag">
+						</input>
+					</div>
+
+					<div class="form-group">
+						<label translate="lobbycalApp.meeting.mPartner"><span
+							class="glyphicon glyphicon-tags">mPartner</span> </label>*<input
+							class="form-control" typ="text" name="mPartner"
+							ng-model="meeting.mPartner"> </input>
+					</div>
+
+					<div class="form-group">
+						* <sub translate="lobbycalApp.meeting.overwrite"></sub>
+					</div>
+					<div class="form-group">
+						<label translate="lobbycalApp.meeting.tag"><span
+							class="glyphicon glyphicon-tags">tag</span></label> <select
+							class="form-control" multiple name="tag" ng-model="meeting.tags"
+							ng-options="tag as tag.i18nKey for tag in tags track by tag.id">
+						</select>
+					</div>
+					<div class="form-group">
+						<label translate="lobbycalApp.meeting.partner">partner</label> <select
+							class="form-control" multiple name="partner"
+							ng-model="meeting.partners"
+							ng-options="partner as partner.name for partner in partners track by partner.id">
+						</select>
+					</div>
+					<div class="form-group">
+						<label translate="lobbycalApp.meeting.user">user</label> <select
+							class="form-control" name="user" ng-model="meeting.userId"
+							ng-options="user.id as user.login for user in users">
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						ng-click="clear()">
+						<span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span
+							translate="entity.action.cancel">Cancel</span>
+					</button>
+					<button type="submit" ng-disabled="editForm.$invalid"
+						class="btn btn-primary">
+						<span class="glyphicon glyphicon-save"></span>&nbsp;<span
+							translate="entity.action.save">Save</span>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="deleteMeetingConfirmation">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form name="deleteForm" ng-submit="confirmDelete(meeting.id)">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true" ng-click="clear()">&times;</button>
+					<h4 class="modal-title" translate="entity.delete.title">Confirm
+						delete operation</h4>
+				</div>
+				<div class="modal-body">
+					<p translate="lobbycalApp.meeting.delete.question"
+						translate-values="{id: '{{meeting.id}}'}">Are you sure you
+						want to delete this Meeting?</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						ng-click="clear()">
+						<span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span
+							translate="entity.action.cancel">Cancel</span>
+					</button>
+					<button type="submit" ng-disabled="deleteForm.$invalid"
+						class="btn btn-danger">
+						<span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span
+							translate="entity.action.delete">Delete</span>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<!-- <th>ID</th> -->
+				<th translate="lobbycalApp.meeting.user">MEP</th>
+				<th translate="lobbycalApp.meeting.title">Title</th>
+				<th translate="lobbycalApp.meeting.mTag">Manual Tags</th>
+				<th translate="lobbycalApp.meeting.mPartner">Manual Partner</th>
+				<th translate="lobbycalApp.meeting.startDate">StartDate</th>
+				<th translate="lobbycalApp.meeting.endDate">EndDate</th>
+				<!-- <th translate="lobbycalApp.meeting.uid">Uid</th> -->
+				<th translate="lobbycalApp.meeting.partner">Partner</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="meeting in meetings">
+				<!-- <td><a ui-sref="meetingDetail({id:meeting.id})">{{meeting.id}}</a></td> -->
+
+				<td>{{meeting.userFirstName}} {{meeting.userLastName}}</td>
+				<td><a ui-sref="meetingDetail({id:meeting.id})">{{meeting.title}}</a></td>
+
+				<td>{{meeting.mTag}}</td>
+				<td>{{meeting.mPartner}}</td>
+				<td>{{meeting.startDate | date:'dd/MM/yyyy HH:mm'}}</td>
+				<td>{{meeting.endDate | date:'dd/MM/yyyy HH:mm'}}</td>
+				<!-- <td>{{meeting.uid}}</td> -->
+				<td><span ng-repeat="p in meeting.partners"> <a
+						ng-if="p.transparencyRegisterID"
+						href="http://ec.europa.eu/transparencyregister/public/consultation/displaylobbyist.do?id={{p.transparencyRegisterID}}">{{p.name}}</a>
+						<span ng-if="!p.transparencyRegisterID"> {{p.name}}</span>
+				</span></td>
+				<td has-role="ROLE_USER">
+					<button type="submit" ui-sref="meetingDetail({id:meeting.id})"
+						class="btn btn-info btn-sm">
+						<span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span
+							translate="entity.action.view"> View</span>
+					</button>
+					<button type="submit" ng-click="showUpdate(meeting.id)"
+						class="btn btn-primary btn-sm">
+						<span class="glyphicon glyphicon-pencil"></span>&nbsp;<span
+							translate="entity.action.edit"> Edit</span>
+					</button>
+					<button type="submit" ng-click="delete(meeting.id)"
+						class="btn btn-danger btn-sm">
+						<span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span
+							translate="entity.action.delete"> Delete</span>
+					</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<nav>
+		<ul class="pager">
+			<li ng-show="links['first']" ng-click="loadPage(links['first'])"><a
+				href="">&lt;&lt;</a></li>
+			<li ng-show="links['prev']" ng-click="loadPage(links['prev'])"><a
+				href="">&lt;</a></li>
+			<li ng-show="links['next']" ng-click="loadPage(links['next'])"><a
+				href="">&gt;</a></li>
+			<li ng-show="links['last']" ng-click="loadPage(links['last'])"><a
+				href="">&gt;&gt;</a></li>
+		</ul>
+	</nav>
+</div>
+</div>

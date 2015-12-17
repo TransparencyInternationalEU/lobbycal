@@ -1,0 +1,27 @@
+{
+    "lobbycalApp": {
+        "meeting" : {
+            "home": {
+                "title": "Meetings",
+                "createLabel": "Créer un nouveau Meeting",
+                "createOrEditLabel": "Créer ou éditer un Meeting"
+            },
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Meeting {{ id }} ?"
+            },
+            "detail": {
+                "title": "Meeting"
+            },
+            "title": "Title",
+            "submitter": "Submitter",
+            "aliasUsed": "AliasUsed",
+            "startDate": "StartDate",
+            "endDate": "EndDate",
+            "uid": "Uid",
+            "tag": "tag",
+            "partner": "Partner",
+            "user": "user"
+        }
+    }
+}
+

@@ -1,0 +1,21 @@
+{
+  "generator-jhipster": {
+    "baseName": "lobbycal",
+    "packageName": "eu.transparency.lobbycal",
+    "packageFolder": "eu/transparency/lobbycal",
+    "authenticationType": "session",
+    "hibernateCache": "no",
+    "clusteredHttpSession": "no",
+    "websocket": "no",
+    "databaseType": "sql",
+    "devDatabaseType": "mysql",
+    "prodDatabaseType": "mysql",
+    "searchEngine": "elasticsearch",
+    "useCompass": false,
+    "buildTool": "maven",
+    "frontendBuilder": "grunt",
+    "javaVersion": "8",
+    "enableTranslation": true,
+    "rememberMeKey": "xxxx"
+  }
+}

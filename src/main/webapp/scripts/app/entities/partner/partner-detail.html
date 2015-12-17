@@ -1,0 +1,39 @@
+
+<div>
+    <h2><span translate="lobbycalApp.partner.detail.title">Partner</span> {{partner.id}}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th translate="entity.detail.field">Field</th>
+                    <th translate="entity.detail.value">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <span translate="lobbycalApp.partner.name">Name</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{partner.name}}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span translate="lobbycalApp.partner.transparencyRegisterID">TransparencyRegisterID</span>
+                    </td>
+                    <td>
+                    <a href="{{partner.transparencyRegisterID}}">{{partner.transparencyRegisterID}}</a>
+                        <!-- input type="url" class="input-sm form-control" value="{{partner.transparencyRegisterID}}" readonly-->
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit"
+            ui-sref="partner"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span translate="entity.action.back"> Back</span>
+    </button>
+</div>

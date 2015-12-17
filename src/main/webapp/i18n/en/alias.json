@@ -1,0 +1,20 @@
+{
+    "lobbycalApp": {
+        "alias" : {
+            "home": {
+                "title": "Aliases",
+                "createLabel": "Create a new Alias",
+                "createOrEditLabel": "Create or edit a Alias"
+            },
+            "delete": {
+                "question": "Are you sure you want to delete Alias {{ id }}?"
+            },
+            "detail": {
+                "title": "Alias"
+            },
+            "alias": "Alias",
+            "active": "Active",
+            "user": "MEP"
+        }
+    }
+}

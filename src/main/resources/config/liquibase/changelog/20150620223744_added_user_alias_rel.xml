@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+   <changeSet author="lobbycal" id="1434839875429-1">
+      <createTable tableName="USER_ALIAS">
+         <column name="user_id" type="BIGINT">
+            <constraints nullable="false"/>
+         </column>
+         <column name="alias_name" type="VARCHAR(20)">
+            <constraints nullable="false"/>
+         </column>
+      </createTable>
+   </changeSet>
+   <changeSet author="lobbycal" id="1434839875429-2">
+      <addPrimaryKey columnNames="user_id, alias_name" tableName="USER_ALIAS"/>
+   </changeSet>
+   <changeSet author="lobbycal" id="1434839875429-3">
+      <addForeignKeyConstraint baseColumnNames="user_id"
+                               baseTableName="USER_ALIAS"
+                               constraintName="FK_eyp8ggc9y4rg43noraknu7iif"
+                               deferrable="false"
+                               initiallyDeferred="false"
+                               referencedColumnNames="id"
+                               referencedTableName="JHI_USER"/>
+   </changeSet>
+</databaseChangeLog>

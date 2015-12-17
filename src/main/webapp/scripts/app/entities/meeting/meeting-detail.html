@@ -1,0 +1,118 @@
+<div>
+	<h2>
+		<span translate="lobbycalApp.meeting.detail.title">Meeting</span>
+		{{meeting.title}}
+	</h2>
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<th:block></th:block>
+				<tr>
+					<th translate="lobbycalApp.meeting.detail.field">Field</th>
+					<th translate="lobbycalApp.meeting.detail.value">Value</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><i class="fa fa-file-text-o" /><span
+						translate="lobbycalApp.meeting.title" /></td>
+					<td><input type="text" class="input-sm form-control"
+						value="{{meeting.title}}" readonly></td>
+				</tr>
+				<tr has-role="ROLE_ADMIN">
+					<td><i class="fa fa-envelope" /><span
+						translate="lobbycalApp.meeting.submitter" /></td>
+					<td><input type="text" class="input-sm form-control"
+						value="{{meeting.submitter}}" readonly></td>
+				</tr>
+				<tr has-role="ROLE_ADMIN">
+					<td><i class="fa  fa-envelope-o " /><span
+						translate="lobbycalApp.meeting.aliasUsed" /></td>
+					<td><input type="text" class="input-sm form-control"
+						value="{{meeting.aliasUsed}}" readonly></td>
+				</tr>
+				<tr>
+					<td><i class="fa fa-calendar-o " /><span
+						translate="lobbycalApp.meeting.startDate" /></td>
+					<td><input type="text" class="input-sm form-control"
+						value="{{meeting.startDate | date:'dd/MM/yyyy HH:mm' }}" readonly></td>
+				</tr>
+				<tr>
+					<td><i class="fa fa-calendar-o " /> <span
+						translate="lobbycalApp.meeting.endDate" /></td>
+					<td><input type="text" class="input-sm form-control"
+						value="{{meeting.endDate | date:'dd/MM/yyyy HH:mm'}}" readonly></td>
+				</tr>
+				<!-- <tr>
+					<td><span translate="lobbycalApp.meeting.uid">Uid</span></td>
+					<td><input type="text" class="input-sm form-control"
+						value="{{meeting.uid}}" readonly></td>
+				</tr> -->
+				<tr has-role="ROLE_ADMIN">
+					<td><i class=" glyphicon glyphicon-user"></i></td>
+					<td><input type="text" class="input-sm form-control"
+						value="{{meeting.userLogin}}" readonly></td>
+				</tr>
+				<tr>
+					<td><i class="glyphicon glyphicon-tags"></i><span
+						translate="lobbycalApp.meeting.mTag"></span></td>
+					<td><div class="row"
+							ng-repeat="val in meeting.mTag.split(' ')">
+							<div class="col-md-6">
+								<span class="pull-right label label-success"
+									style="white-space: normal; word-break: break-all">{{val}}</span>
+							</div>
+						</div></td>
+				</tr>
+				<tr ng-if="!meeting.tags.length==0">
+					<td><i class="glyphicon glyphicon-tags"></i><span
+						translate="lobbycalApp.meeting.tag"></span></td>
+					<td>
+						<div class="row" ng-repeat="tag in meeting.tags">
+							<div class="col-md-6">
+								<span class="pull-right label label-success"
+									style="white-space: normal; word-break: break-all">{{tag.i18nKey}}</span>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td><i class="fa fa-users "></i><span contextmenu=""
+						translate="lobbycalApp.meeting.mPartner" ></span></td>
+					<td><input type="text" class="input-sm form-control"
+						value="{{meeting.mPartner}}" readonly /></td>
+				</tr>
+				<tr>
+					<td><i class="fa fa-users "><span
+							translate="lobbycalApp.meeting.partner"></span></i></td>
+					<td>
+						<div class="row" ng-repeat="partner in meeting.partners">
+							<div class="col-md-6">
+								<div ng-if="!partner.transparencyRegisterID">
+									<span class="pull-right label label-danger"
+										style="white-space: normal; word-break: break-all">{{partner.name}}
+									</span>
+								</div>
+								<div ng-if="partner.transparencyRegisterID">
+									<a
+										href="http://ec.europa.eu/transparencyregister/public/consultation/displaylobbyist.do?id={{partner.transparencyRegisterID}}">
+
+										<span class="pull-right label label-danger"
+										style="white-space: normal; word-break: break-all">{{partner.name}}
+									</span>
+									</a>
+								</div>
+
+							</div>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<button type="submit" ui-sref="meeting" class="btn btn-info">
+		<span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span
+			translate="entity.action.back"> Back</span>
+	</button>
+</div>

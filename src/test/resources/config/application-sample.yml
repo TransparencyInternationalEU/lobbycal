@@ -1,0 +1,69 @@
+server:
+    port: 10344
+    address: localhost
+
+
+# security configuration (this key should be unique for your application, and kept secret)
+jhipster.security.rememberme.key: 
+
+async:
+    corePoolSize: 2
+    maxPoolSize: 50
+    queueCapacity: 10000
+
+liquibase:
+    context: test
+
+spring:
+    datasource:
+        dataSourceClassName: org.h2.jdbcx.JdbcDataSource
+        url: jdbc:h2:mem:lobbycal;DB_CLOSE_DELAY=-1
+        databaseName:
+        serverName:
+        username:
+        password:
+
+    jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        database: H2
+        openInView: false
+        show_sql: true
+        generate-ddl: false
+        hibernate:
+            ddl-auto: none
+            naming-strategy: org.hibernate.cfg.EJB3NamingStrategy
+        properties:
+            hibernate.cache.use_second_level_cache: false
+            hibernate.cache.use_query_cache: false
+            hibernate.generate_statistics: true
+            hibernate.hbm2ddl.auto: validate
+
+mail:
+    host: 
+    port: 465
+    username: 
+    password: 
+    protocol: smtp
+    tls: false
+    auth: true
+    from: 
+    
+catchall:
+        mail:
+                host: 
+                username: 
+                password: 
+                port: 143
+                nossl: true
+   
+metrics:
+    jmx.enabled: false
+
+swagger:
+    title: lobbycal API
+    description: lobbycal application programmer interface
+    termsOfServiceUrl: https://github.com/TransparencyInternationalEU/lobbycal
+    contact: Transparency International EU 
+    license: CC0
+    licenseUrl: https://creativecommons.org/publicdomain/zero/1.0/
+    

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<include
+		file="classpath:config/liquibase/changelog/00000000000000_initial_schema.xml"
+		relativeToChangelogFile="false" />
+	<include
+		file="classpath:config/liquibase/changelog/20150618203148_added_entity_Tag.xml"
+		relativeToChangelogFile="false" />
+	<include
+		file="classpath:config/liquibase/changelog/20150618203404_added_entity_Partner.xml"
+		relativeToChangelogFile="false" />
+	<include
+		file="classpath:config/liquibase/changelog/20150618203913_added_entity_Meeting.xml"
+		relativeToChangelogFile="false" />
+	<include
+		file="classpath:config/liquibase/changelog/20150620171606_added_entity_Submitter.xml"
+		relativeToChangelogFile="false" />
+	<include
+		file="classpath:config/liquibase/changelog/20150620171808_added_entity_Alias.xml"
+		relativeToChangelogFile="false" />
+	<include
+		file="classpath:config/liquibase/changelog/20150620223744_added_user_alias_rel.xml"
+		relativeToChangelogFile="false" />
+
+
+	<include
+		file="classpath:config/liquibase/changelog/20151125175340_adapted_entity_Meeting.xml"
+		relativeToChangelogFile="false" />
+	<!-- JHipster will add liquibase changelogs here -->
+
+
+</databaseChangeLog>

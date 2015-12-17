@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="true">
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>utf-8</charset>
+			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level (%file:%line\) - %message%n</Pattern>
+		</encoder>
+	</appender>
+	<logger name="eu.transparency.lobbycal" level="DEBUG" />
+	<logger name="org.hibernate" level="WARN" />
+	<logger name="org.hibernate.ejb.HibernatePersistence" level="OFF" />
+	<logger name="org.apache.catalina.startup.DigesterFactory"
+		level="OFF" />
+
+	<root level="WARN">
+		<appender-ref ref="CONSOLE" />
+	</root>
+
+</configuration>

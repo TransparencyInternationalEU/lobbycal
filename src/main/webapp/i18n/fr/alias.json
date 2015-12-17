@@ -1,0 +1,21 @@
+{
+    "lobbycalApp": {
+        "alias" : {
+            "home": {
+                "title": "Aliass",
+                "createLabel": "Créer un nouveau Alias",
+                "createOrEditLabel": "Créer ou éditer un Alias"
+            },
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Alias {{ id }} ?"
+            },
+            "detail": {
+                "title": "Alias"
+            },
+            "alias": "Alias",
+            "active": "Active",
+            "user": "user"
+        }
+    }
+}
+

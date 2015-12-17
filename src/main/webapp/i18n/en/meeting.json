@@ -1,0 +1,40 @@
+{
+	"lobbycalApp": 
+	{
+		"meeting": 
+		{
+			"home": 
+			{
+				"title": "Meetings",
+				"createLabel": "Create a new Meeting",
+				"createOrEditLabel": "Create or edit a Meeting"
+			},
+
+			"delete": 
+			{
+				"question": "Are you sure you want to delete Meeting {{ id }}?"
+			},
+
+			"detail": 
+			{
+				"title": "Meeting",
+				"field": "",
+				"value": ""
+			},
+
+			"title": " Title",
+			"submitter": " Submitter",
+			"aliasUsed": " Alias ",
+			"startDate": " Start ",
+			"endDate": " End ",
+			"uid": " Uid",
+			"tag": " Tag(s) from invitation email",
+			"mTag": " Manually assigned tags",
+			"partner": " Partner from invitation email",
+			"mPartner": " Manually assigned partner",
+			"user": " MEP",
+			"tags": " Tags",
+			"overwrite": "The tags, partner name and eventually register ID that have been extracted from the subject line of invitation emails can be overwritten. The overwriten values will be stored in an extra field. Subsequent changes in Outlook will be stored, but not displayed, as long as a manual overwrite entry exists. Manual changes rule over automatically extracted values. If the manual overwrite gets deleted, the parter and register ID derived from the subject line will be displayed."
+		}
+	}
+}

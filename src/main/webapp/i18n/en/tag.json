@@ -1,0 +1,23 @@
+{
+    "lobbycalApp": {
+        "tag" : {
+            "home": {
+                "title": "Tags",
+                "createLabel": "Create a new Tag",
+                "createOrEditLabel": "Create or edit a Tag"
+            },
+            "delete": {
+                "question": "Are you sure you want to delete Tag {{ id }}?"
+            },
+            "detail": {
+                "title": "Tag"
+            },
+            "i18nKey": "I18nKey",
+            "de": "De",
+            "en": "En",
+            "fr": "Fr",
+            "es": "Es",
+            "meeting": "meeting"
+        }
+    }
+}

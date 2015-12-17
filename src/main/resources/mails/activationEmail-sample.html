@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title th:text="#{email.activation.title}">lobbycal activation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<p th:text="#{email.activation.greeting(${user.login})}">Dear</p>
+	<p th:text="#{email.activation.text1}">Your lobbycal account has
+		been created, please click on the URL below to activate it:</p>
+	<p>
+		Activation Link: <a
+			th:href="@{|hostname/#/activate?key=${user.activationKey}|}"
+			th:text="|${user.login}|">Activation Link</a><br />
+	</p>
+	<p>
+		After activation, please complete the registration in order to use the
+		plugin. For this, please login to your account and go to Settings to
+		fill the empty fields Direct link to the settings: <a
+			href="hostname/#/settings">hostname/#/settings</a>
+	</p>
+	<p>
+		Finally, you need to set up the plugin on your website to display your
+		lobby meetings. You can download the plugin here: <a
+			href="hostname/lobbycal2press.zip">hostname/lobbycal2press.zip</a>
+		Ιn the Wordpress settings dialogue, enter this value as "API URL for
+		your MEP": <a
+			th:href="@{|hostname/api/meetings/mep/${user.id}|}"
+			th:text="'hostname/api/meetings/mep/'+${user.id}">
+			Plugin URL </a>
+	</p>
+
+	<p>You can configure other things there, like which fields to show
+		or how many appointments to show on one page. Give it a try!</p>
+
+	<p>
+		<span th:text="#{email.activation.text2}">Kind Regards, </span> <br /> <em
+			th:text="#{email.signature}">lobbycal.</em>
+	</p>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<div ng-cloak>
+	<div class="row">
+		<div class="col-md-4">
+			<span class="hipster img-responsive img-rounded"></span>
+		</div>
+		<div class="col-md-8">
+			<h1 translate="main.title">Welcome to lobbycal!</h1>
+			<p class="lead" translate="main.subtitle">This is the lobbycal
+				server</p>
+
+			<div ng-switch="isAuthenticated()">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				<hr />
+
+
+
+
+
+
+				<div class="alert alert-success" ng-switch-when="true"
+					translate="main.logged.message"
+					translate-values="{username: '{{account.login}}'}">You are
+					logged in as user "{{account.login}}".</div>
+				<div class="alert alert-warning" ng-switch-when="false"
+					translate="global.messages.info.authenticated">
+					Please <a href="#/login">login </a>.
+				</div>
+
+				<div class="alert alert-warning" ng-switch-when="false"
+					translate="global.messages.info.register">
+					You don't have an account yet? <a href="#/register">Register a
+						new account</a>
+				</div>
+
+
+
+
+
+
+			</div>
+
+
+
+			<!-- 
+			<p translate="main.question">If you have any question on
+				JHipster:</p>
+			-->
+			<p translate="main.plugin">You can download the plugin for
+				lobbycal here</p>
+			<a href="lobbycal2press.zip">Download sortable, searchable and
+				filterable table plugin</a> <br /> <br /> <a
+				href="http://www.transparency.eu" target="_blank"
+				translate="main.link.institution">institution</a>
+		</div>
+	</div>
+</div>

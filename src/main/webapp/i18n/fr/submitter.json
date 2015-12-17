@@ -1,0 +1,21 @@
+{
+    "lobbycalApp": {
+        "submitter" : {
+            "home": {
+                "title": "Submitters",
+                "createLabel": "Créer un nouveau Submitter",
+                "createOrEditLabel": "Créer ou éditer un Submitter"
+            },
+            "delete": {
+                "question": "Etes-vous certain de vouloir supprimer le Submitter {{ id }} ?"
+            },
+            "detail": {
+                "title": "Submitter"
+            },
+            "email": "Email",
+            "active": "Active",
+            "user": "user"
+        }
+    }
+}
+

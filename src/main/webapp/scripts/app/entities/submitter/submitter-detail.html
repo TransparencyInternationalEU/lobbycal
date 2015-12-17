@@ -1,0 +1,46 @@
+
+<div>
+    <h2><span translate="lobbycalApp.submitter.detail.title">Submitter</span> {{submitter.id}}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th translate="entity.detail.field">Field</th>
+                    <th translate="entity.detail.value">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <span translate="lobbycalApp.submitter.email">Email</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{submitter.email}}" readonly>
+                    </td>
+                </tr>
+                <tr  ng-show="false">
+                    <td>
+                        <span translate="lobbycalApp.submitter.active">Active</span>
+                    </td>
+                    <td>
+                        <input type="hidden" class="input-sm form-control" value="{{submitter.active}}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span translate="lobbycalApp.submitter.user">User</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{submitter.user.email}}" readonly>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit"
+            ui-sref="submitter"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span translate="entity.action.back"> Back</span>
+    </button>
+</div>

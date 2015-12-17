@@ -1,0 +1,20 @@
+{
+    "lobbycalApp": {
+        "partner" : {
+            "home": {
+                "title": "Partners",
+                "createLabel": "Create a new Partner",
+                "createOrEditLabel": "Create or edit a Partner"
+            },
+            "delete": {
+                "question": "Are you sure you want to delete Partner {{ id }}?"
+            },
+            "detail": {
+                "title": "Partner"
+            },
+            "name": "Name",
+            "transparencyRegisterID": "TransparencyRegisterID",
+            "meeting": "meeting"
+        }
+    }
+}

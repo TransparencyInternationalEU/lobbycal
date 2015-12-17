@@ -1,0 +1,153 @@
+<div>
+
+    <h2 translate="lobbycalApp.tag.home.title">Tags</h2>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#saveTagModal" ng-click="clear()">
+                    <span class="glyphicon glyphicon-flash"></span> <span translate="lobbycalApp.tag.home.createLabel">Create a new Tag</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="saveTagModal" tabindex="-1" role="dialog" aria-labelledby="myTagLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form name="editForm" role="form" novalidate ng-submit="save()">
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                ng-click="clear()">&times;</button>
+                        <h4 class="modal-title" id="myTagLabel" translate="lobbycalApp.tag.home.createOrEditLabel">Create or edit a Tag</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>ID</label>
+                            <input type="text" class="form-control" name="id"
+                                   ng-model="tag.id" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label translate="lobbycalApp.tag.i18nKey">I18nKey</label>
+                            <input type="text" class="form-control" name="i18nKey"
+                                   ng-model="tag.i18nKey">
+
+                        </div>
+                        <div class="form-group">
+                            <label translate="lobbycalApp.tag.de">De</label>
+                            <input type="text" class="form-control" name="de"
+                                   ng-model="tag.de">
+
+                        </div>
+                        <div class="form-group">
+                            <label translate="lobbycalApp.tag.en">En</label>
+                            <input type="text" class="form-control" name="en"
+                                   ng-model="tag.en">
+
+                        </div>
+                        <div class="form-group">
+                            <label translate="lobbycalApp.tag.fr">Fr</label>
+                            <input type="text" class="form-control" name="fr"
+                                   ng-model="tag.fr">
+
+                        </div>
+                        <div class="form-group">
+                            <label translate="lobbycalApp.tag.es">Es</label>
+                            <input type="text" class="form-control" name="es"
+                                   ng-model="tag.es">
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
+                            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span translate="entity.action.cancel">Cancel</span>
+                        </button>
+                        <button type="submit" ng-disabled="editForm.$invalid" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-save"></span>&nbsp;<span translate="entity.action.save">Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteTagConfirmation">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form name="deleteForm" ng-submit="confirmDelete(tag.id)">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                ng-click="clear()">&times;</button>
+                        <h4 class="modal-title" translate="entity.delete.title">Confirm delete operation</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p translate="lobbycalApp.tag.delete.question" translate-values="{id: '{{tag.id}}'}">Are you sure you want to delete this Tag?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
+                            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span translate="entity.action.cancel">Cancel</span>
+                        </button>
+                        <button type="submit" ng-disabled="deleteForm.$invalid" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span translate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th translate="lobbycalApp.tag.i18nKey">I18nKey</th>
+                    <th translate="lobbycalApp.tag.de">De</th>
+                    <th translate="lobbycalApp.tag.en">En</th>
+                    <th translate="lobbycalApp.tag.fr">Fr</th>
+                    <th translate="lobbycalApp.tag.es">Es</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="tag in tags">
+                    <td><a ui-sref="tagDetail({id:tag.id})">{{tag.id}}</a></td>
+                    <td>{{tag.i18nKey}}</td>
+                    <td>{{tag.de}}</td>
+                    <td>{{tag.en}}</td>
+                    <td>{{tag.fr}}</td>
+                    <td>{{tag.es}}</td>
+                    <td>
+                        <button type="submit"
+                                ui-sref="tagDetail({id:tag.id})"
+                                class="btn btn-info btn-sm">
+                            <span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span translate="entity.action.view"> View</span>
+                        </button>
+                        <button type="submit"
+                                ng-click="showUpdate(tag.id)"
+                                class="btn btn-primary btn-sm">
+                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;<span translate="entity.action.edit"> Edit</span>
+                        </button>
+                        <button type="submit"
+                                ng-click="delete(tag.id)"
+                                class="btn btn-danger btn-sm">
+                            <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span translate="entity.action.delete"> Delete</span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <nav>
+            <ul class="pager">
+                <li ng-show="links['first']" ng-click="loadPage(links['first'])"><a href="">&lt;&lt;</a></li>
+                <li ng-show="links['prev']" ng-click="loadPage(links['prev'])"><a href="">&lt;</a></li>
+                <li ng-show="links['next']" ng-click="loadPage(links['next'])"><a href="">&gt;</a></li>
+                <li ng-show="links['last']" ng-click="loadPage(links['last'])"><a href="">&gt;&gt;</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>

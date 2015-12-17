@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<property name="now" value="now()" dbms="mysql,h2" />
+	<property name="now" value="current_timestamp" dbms="postgresql" />
+	<property name="now" value="sysdate" dbms="oracle" />
+
+	<property name="autoIncrement" value="true" dbms="mysql,h2,postgresql" />
+	<property name="autoIncrement" value="false" dbms="oracle" />
+	<!-- Added the entity Submitter. -->
+	<changeSet id="20150620171606" author="lobbycal">
+		 <validCheckSum>7:647776c33447d9f6b6122e7d36943c8c</validCheckSum> 
+		<createTable tableName="SUBMITTER">
+			<column name="id" type="bigint" autoIncrement="${autoIncrement}">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="email" type="varchar(70)">
+				<constraints nullable="false" />
+			</column>
+			<column name="active" type="boolean" />
+			<column name="user_id" type="bigint" />
+		</createTable>
+
+		<addForeignKeyConstraint baseColumnNames="user_id"
+			baseTableName="SUBMITTER" constraintName="fk_submitter_user_id"
+			referencedColumnNames="id" referencedTableName="JHI_USER" />
+
+
+		<loadData encoding="UTF-8" file="config/liquibase/submitters.csv"
+			separator=";" tableName="SUBMITTER">
+			<column name="id" type="numeric" />
+			<column name="email" type="string"/>
+			<column name="active" type="boolean" />
+			<column name="user_id" type="numeric" />
+			
+		</loadData>
+
+	</changeSet>
+</databaseChangeLog>

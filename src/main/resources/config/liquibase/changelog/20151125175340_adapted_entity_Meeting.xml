@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+   <changeSet author="lobbycal" id="1448470442782-1">
+      <addColumn tableName="MEETING">
+         <column name="mPartner" type="varchar(255)"/>
+      </addColumn>
+   </changeSet>
+   <changeSet author="lobbycal" id="1448470442782-2">
+      <addColumn tableName="MEETING">
+         <column name="mTag" type="varchar(255)"/>
+      </addColumn>
+   </changeSet>
+   <changeSet author="lobbycal" id="1448470442782-3">
+      <dropDefaultValue columnDataType="datetime"
+                        columnName="created_date"
+                        tableName="JHI_USER"/>
+   </changeSet>
+</databaseChangeLog>

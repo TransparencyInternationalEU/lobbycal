@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="4 seconds">
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<charset>utf-8</charset>
+
+			<Pattern>%d{HH:mm:ss} %-5level (%file:%line\) : %msg%n</Pattern>
+
+		</encoder>
+	</appender>
+
+	<!-- [%p] %c - %m%n The FILE and ASYNC appenders are here as examples for 
+		a production configuration <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level (%file:%line\) 
+		- %message%n</Pattern> -->
+	<appender name="FILE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logback.logdir}/logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<maxHistory>90</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<charset>utf-8</charset>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] (%file:%line\): %msg%n</Pattern>
+		</encoder>
+	</appender>
+	<logger name="org.hibernate" level="ERROR" />
+	<logger name="eu.transparency.lobbycal" level="DEBUG" />
+	<logger name="eu.transparency.lobbycal.aop.logging" level="DEBUG" />
+	
+	<logger name="org.jodd" level="INFO" />
+	<logger name="net.fortuna.ical4j" level="INFO" />
+	<logger name="javax.activation" level="WARN" />
+	<logger name="javax.mail" level="WARN" />
+	<logger name="com.sun.mail" level="WARN" />
+	<logger name="javax.xml.bind" level="WARN" />
+	<logger name="ch.qos.logback" level="WARN" />
+	<logger name="com.codahale.metrics" level="WARN" />
+	<logger name="com.ryantenney" level="WARN" />
+	<logger name="com.sun.xml.internal.bind" level="WARN" />
+	<logger name="com.zaxxer" level="WARN" />
+	<logger name="io.undertow" level="WARN" />
+	<logger name="org.apache" level="WARN" />
+	<logger name="org.apache.catalina.startup.DigesterFactory"
+		level="OFF" />
+	<logger name="org.bson" level="WARN" />
+	<logger name="org.elasticsearch" level="WARN" />
+	<logger name="org.hibernate.validator" level="WARN" />
+	<logger name="org.hibernate" level="WARN" />
+	<logger name="org.hibernate.ejb.HibernatePersistence" level="OFF" />
+	<logger name="org.springframework" level="WARN" />
+	<logger name="org.springframework.web" level="WARN" />
+	<logger name="org.springframework.security" level="WARN" />
+	<logger name="org.springframework.cache" level="WARN" />
+	<logger name="org.thymeleaf" level="WARN" />
+	<logger name="org.xnio" level="WARN" />
+	<logger name="com.mangofactory.swagger" level="WARN" />
+	<logger name="com.wordnik.swagger" level="WARN" />
+	<logger name="liquibase" level="WARN" />
+	<logger name="sun.rmi.transport" level="WARN" />
+
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+		<resetJUL>true</resetJUL>
+	</contextListener>
+
+	<root level="${logback.loglevel}">
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="FILE" />
+	</root>
+
+</configuration>

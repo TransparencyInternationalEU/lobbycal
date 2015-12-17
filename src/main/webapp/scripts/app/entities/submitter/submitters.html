@@ -1,0 +1,150 @@
+<div>
+
+    <h2 translate="lobbycalApp.submitter.home.title">Submitters</h2>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#saveSubmitterModal" ng-click="clear()">
+                    <span class="glyphicon glyphicon-flash"></span> <span translate="lobbycalApp.submitter.home.createLabel">Create a new Submitter</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="saveSubmitterModal" tabindex="-1" role="dialog" aria-labelledby="mySubmitterLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form name="editForm" role="form" novalidate ng-submit="save()" show-validation>
+
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                ng-click="clear()">&times;</button>
+                        <h4 class="modal-title" id="mySubmitterLabel" translate="lobbycalApp.submitter.home.createOrEditLabel">Create or edit a Submitter</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>ID</label>
+                            <input type="text" class="form-control" name="id"
+                                   ng-model="submitter.id" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label translate="lobbycalApp.submitter.email">Email</label>
+                            <input type="text" class="form-control" name="email"
+                                   ng-model="submitter.email" required ng-minlength="6" ng-maxlength="70">
+
+                            <div ng-show="editForm.email.$invalid">
+                                <p class="help-block"
+                                   ng-show="editForm.email.$error.required" translate="entity.validation.required">
+                                    This field is required.
+                                </p>
+                                <p class="help-block"
+                                   ng-show="editForm.email.$error.minlength" translate="entity.validation.minlength" translate-value-min="6">
+                                    This field is required to be at least 6 characters.
+                                </p>
+                                <p class="help-block"
+                                   ng-show="editForm.email.$error.maxlength" translate="entity.validation.maxlength" translate-value-max="70">
+                                    This field cannot be longer than 70 characters.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label translate="lobbycalApp.submitter.active">Active</label>
+                            <input type="checkbox" class="form-control" name="active"
+                                   ng-model="submitter.active">
+
+                        </div>
+
+                        <div class="form-group">
+                            <label translate="lobbycalApp.submitter.user">user</label>
+                            <select class="form-control" name="user" ng-model="submitter.user.id" ng-options="user.id as user.email for user in users">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
+                            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span translate="entity.action.cancel">Cancel</span>
+                        </button>
+                        <button type="submit" ng-disabled="editForm.$invalid" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-save"></span>&nbsp;<span translate="entity.action.save">Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteSubmitterConfirmation">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form name="deleteForm" ng-submit="confirmDelete(submitter.id)">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                ng-click="clear()">&times;</button>
+                        <h4 class="modal-title" translate="entity.delete.title">Confirm delete operation</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p translate="lobbycalApp.submitter.delete.question" translate-values="{id: '{{submitter.id}}'}">Are you sure you want to delete this Submitter?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="clear()">
+                            <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span translate="entity.action.cancel">Cancel</span>
+                        </button>
+                        <button type="submit" ng-disabled="deleteForm.$invalid" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span translate="entity.action.delete">Delete</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped"  >
+            <thead>
+                <tr>
+                    <th has-role="ROLE_ADMIN">ID</th>
+                    <th translate="lobbycalApp.submitter.email">Email</th>
+                    <th translate="lobbycalApp.submitter.active">Active</th>
+                    <th translate="lobbycalApp.submitter.user">User</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="submitter in submitters">
+                    <td has-role="ROLE_ADMIN"><a ui-sref="submitterDetail({id:submitter.id})">{{submitter.id}}</a></td>
+                    <td>{{submitter.email}}</td>
+                    <td>{{submitter.active}}</td>
+                    <td>{{submitter.user.email}}</td>
+                    <td>
+                        <button type="submit"
+                                ui-sref="submitterDetail({id:submitter.id})"
+                                class="btn btn-info btn-sm">
+                            <span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span translate="entity.action.view"> View</span>
+                        </button>
+                        <button type="submit"
+                                ng-click="showUpdate(submitter.id)"
+                                class="btn btn-primary btn-sm">
+                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;<span translate="entity.action.edit"> Edit</span>
+                        </button>
+                        <button type="submit"
+                                ng-click="delete(submitter.id)"
+                                class="btn btn-danger btn-sm">
+                            <span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span translate="entity.action.delete"> Delete</span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <nav>
+            <ul class="pager">
+                <li ng-show="links['first']" ng-click="loadPage(links['first'])"><a href="">&lt;&lt;</a></li>
+                <li ng-show="links['prev']" ng-click="loadPage(links['prev'])"><a href="">&lt;</a></li>
+                <li ng-show="links['next']" ng-click="loadPage(links['next'])"><a href="">&gt;</a></li>
+                <li ng-show="links['last']" ng-click="loadPage(links['last'])"><a href="">&gt;&gt;</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>

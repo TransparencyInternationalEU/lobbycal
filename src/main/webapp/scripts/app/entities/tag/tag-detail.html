@@ -1,0 +1,62 @@
+
+<div>
+    <h2><span translate="lobbycalApp.tag.detail.title">Tag</span> {{tag.id}}</h2>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th translate="entity.detail.field">Field</th>
+                    <th translate="entity.detail.value">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <span translate="lobbycalApp.tag.i18nKey">I18nKey</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{tag.i18nKey}}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span translate="lobbycalApp.tag.de">De</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{tag.de}}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span translate="lobbycalApp.tag.en">En</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{tag.en}}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span translate="lobbycalApp.tag.fr">Fr</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{tag.fr}}" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span translate="lobbycalApp.tag.es">Es</span>
+                    </td>
+                    <td>
+                        <input type="text" class="input-sm form-control" value="{{tag.es}}" readonly>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <button type="submit"
+            ui-sref="tag"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span translate="entity.action.back"> Back</span>
+    </button>
+</div>
