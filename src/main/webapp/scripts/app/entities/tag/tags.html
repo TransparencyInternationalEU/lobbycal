@@ -2,12 +2,22 @@
 
     <h2 translate="lobbycalApp.tag.home.title">Tags</h2>
 
+	<jh-alert></jh-alert>
     <div class="container">
         <div class="row">
             <div class="col-md-4">
                 <button class="btn btn-primary" data-toggle="modal" data-target="#saveTagModal" ng-click="clear()">
                     <span class="glyphicon glyphicon-flash"></span> <span translate="lobbycalApp.tag.home.createLabel">Create a new Tag</span>
                 </button>
+            </div>
+            <div class="col-md-8">
+                <form name="searchForm" class="form-inline">
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="searchQuery" id="searchQuery" placeholder="query">
+                    </div>
+                    <button class="btn btn-info" ng-click="search()"><span class="glyphicon glyphicon-search"></span> <span>Search a Tag</span>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -36,7 +46,7 @@
                                    ng-model="tag.i18nKey">
 
                         </div>
-                        <div class="form-group">
+                     <!--    <div class="form-group">
                             <label translate="lobbycalApp.tag.de">De</label>
                             <input type="text" class="form-control" name="de"
                                    ng-model="tag.de">
@@ -59,7 +69,7 @@
                             <input type="text" class="form-control" name="es"
                                    ng-model="tag.es">
 
-                        </div>
+                        </div> -->
 
                     </div>
                     <div class="modal-footer">
@@ -101,27 +111,27 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table table-striped">
+        <table class="table table-striped" >
             <thead>
                 <tr>
-                    <th>ID</th>
+					<th>ID</th>	
                     <th translate="lobbycalApp.tag.i18nKey">I18nKey</th>
-                    <th translate="lobbycalApp.tag.de">De</th>
+                 <!--    <th translate="lobbycalApp.tag.de">De</th>
                     <th translate="lobbycalApp.tag.en">En</th>
                     <th translate="lobbycalApp.tag.fr">Fr</th>
-                    <th translate="lobbycalApp.tag.es">Es</th>
-                    <th></th>
+                    <th translate="lobbycalApp.tag.es">Es</th> -->
+                    <th width="35%"></th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="tag in tags">
                     <td><a ui-sref="tagDetail({id:tag.id})">{{tag.id}}</a></td>
                     <td>{{tag.i18nKey}}</td>
-                    <td>{{tag.de}}</td>
+                   <!--  <td>{{tag.de}}</td>
                     <td>{{tag.en}}</td>
                     <td>{{tag.fr}}</td>
-                    <td>{{tag.es}}</td>
-                    <td>
+                    <td>{{tag.es}}</td> -->
+                    <td  align="right">
                         <button type="submit"
                                 ui-sref="tagDetail({id:tag.id})"
                                 class="btn btn-info btn-sm">
@@ -141,13 +151,9 @@
                 </tr>
             </tbody>
         </table>
-        <nav>
-            <ul class="pager">
-                <li ng-show="links['first']" ng-click="loadPage(links['first'])"><a href="">&lt;&lt;</a></li>
-                <li ng-show="links['prev']" ng-click="loadPage(links['prev'])"><a href="">&lt;</a></li>
-                <li ng-show="links['next']" ng-click="loadPage(links['next'])"><a href="">&gt;</a></li>
-                <li ng-show="links['last']" ng-click="loadPage(links['last'])"><a href="">&gt;&gt;</a></li>
-            </ul>
-        </nav>
+       <div class="text-center">
+		<uib-pagination class="pagination-sm" total-items="totalItems"
+			ng-model="page" ng-change="loadAll()"></uib-pagination>
+	</div>
     </div>
 </div>

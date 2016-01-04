@@ -1,12 +1,12 @@
 package eu.transparency.lobbycal.repository;
 
-import eu.transparency.lobbycal.domain.PersistentToken;
-import eu.transparency.lobbycal.domain.User;
+import java.time.LocalDate;
+import java.util.List;
 
-import org.joda.time.LocalDate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import eu.transparency.lobbycal.domain.PersistentToken;
+import eu.transparency.lobbycal.domain.User;
 
 /**
  * Spring Data JPA repository for the PersistentToken entity.

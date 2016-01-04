@@ -5,23 +5,13 @@ package eu.transparency.lobbycal.service;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.mail.Flags;
-
-import jodd.mail.EmailAttachment;
-import jodd.mail.EmailFilter;
-import jodd.mail.EmailMessage;
-import jodd.mail.ImapServer;
-import jodd.mail.MailAddress;
-import jodd.mail.ReceiveMailSession;
-import jodd.mail.ReceivedEmail;
-import net.fortuna.ical4j.data.CalendarBuilder;
-import net.fortuna.ical4j.data.ParserException;
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.Property;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
@@ -33,6 +23,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import eu.transparency.lobbycal.domain.Meeting;
+import jodd.mail.EmailAttachment;
+import jodd.mail.EmailFilter;
+import jodd.mail.EmailMessage;
+import jodd.mail.ImapServer;
+import jodd.mail.MailAddress;
+import jodd.mail.ReceiveMailSession;
+import jodd.mail.ReceivedEmail;
+import net.fortuna.ical4j.data.CalendarBuilder;
+import net.fortuna.ical4j.data.ParserException;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.Property;
 
 /**
  * @author lobbycal
@@ -57,17 +58,22 @@ public class MailFetcherService {
 	MailService mailService;
 
 	@PostConstruct
-	public void init() {
+	public void init() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException  {
 		log.info(env.getProperty("catchall.mail.username"));
 		log.info(env.getProperty("catchall.mail.folder", "INBOX"));
+		System.setProperty("file.encoding","UTF-8");
+		Field charset = Charset.class.getDeclaredField("defaultCharset");
+		log.info("Set file encoding to " + System.getProperty("file.encoding"));
+		charset.setAccessible(true);
+		charset.set(null,null);
 	}
 
 	
 	
 	// LIVE: Agreed 1 minute
-	@Scheduled(fixedDelay = 300000)
+	@Scheduled(fixedDelay = 60000)
 	public void fetchAllEmail() {
-
+		
 		ReceiveMailSession session = imapServer.createSession();
 		log.debug(imapServer.getHost() + "  " + imapServer.getAuthenticator());
 		try {
@@ -102,6 +108,7 @@ public class MailFetcherService {
 						for (EmailMessage em : calEmail.getAllMessages()) {
 							encodingOfEmail = em.getEncoding();
 							log.info(encodingOfEmail);
+							log.info( System.getProperty("file.encoding"));
 
 						}
 						String mimeType = att.getDataSource().getContentType();

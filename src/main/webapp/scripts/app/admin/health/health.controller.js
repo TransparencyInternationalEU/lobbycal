@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('lobbycalApp')
-    .controller('HealthController', function ($scope, MonitoringService) {
+    .controller('HealthController', function ($scope, MonitoringService, $uibModal) {
         $scope.updatingHealth = true;
         $scope.separator = '.';
 
@@ -61,9 +61,24 @@ angular.module('lobbycalApp')
         };
 
 
-        $scope.showHealth = function (health) {
-            $scope.currentHealth = health;
-            $('#showHealthModal').modal('show');
+        $scope.showHealth = function(health) {
+            var modalInstance = $uibModal.open({
+                templateUrl: 'scripts/app/admin/health/health.modal.html',
+                controller: 'HealthModalController',
+                size: 'lg',
+                resolve: {
+                    currentHealth: function() {
+                        return health;
+                    },
+                    baseName: function() {
+                        return $scope.baseName;
+                    },
+                    subSystemName: function() {
+                        return $scope.subSystemName;
+                    }
+
+                }
+            });
         };
 
         $scope.addHealthObject = function (result, isLeaf, healthObject, name) {
@@ -71,6 +86,7 @@ angular.module('lobbycalApp')
             var healthData = {
                 'name': name
             };
+            console.log(name)
             var details = {};
             var hasDetails = false;
 

@@ -10,6 +10,7 @@ angular.module('lobbycalApp')
         $scope.loadAll = function() {
             Meeting.query({page: $scope.page, per_page: 20}, function(result, headers) {
                 $scope.links = ParseLinks.parse(headers('link'));
+                $scope.totalItems = headers('X-Total-Count');
                 $scope.meetings = result;
             });
         };
@@ -18,6 +19,7 @@ angular.module('lobbycalApp')
             $scope.loadAll();
         };
         $scope.loadAll();
+        
 
         $scope.showUpdate = function (id) {
             Meeting.get({id: id}, function(result) {
@@ -58,6 +60,7 @@ angular.module('lobbycalApp')
 
         $scope.search = function () {
             MeetingSearch.query({query: $scope.searchQuery}, function(result) {
+            	console.log(result);
                 $scope.meetings = result;
             }, function(response) {
                 if(response.status === 404) {
@@ -76,5 +79,27 @@ angular.module('lobbycalApp')
             $scope.meeting = {title: null, mTag: null, mPartner: null, submitter: null, aliasUsed: null, startDate: null, endDate: null, uid: null, id: null};
             $scope.editForm.$setPristine();
             $scope.editForm.$setUntouched();
+        };
+        
+        $scope.datePickerForDate = {};
+
+        $scope.datePickerForDate.status = {
+            opened: false
+        };
+
+        $scope.datePickerForDateOpen = function($event) {
+            $scope.datePickerForDate.status.opened = true;
+        };
+        
+        
+        
+        $scope.datePickerForEndDate = {};
+
+        $scope.datePickerForEndDate.status = {
+            opened: false
+        };
+
+        $scope.datePickerForEndDateOpen = function($event) {
+            $scope.datePickerForEndDate.status.opened = true;
         };
     });

@@ -1,19 +1,29 @@
 package eu.transparency.lobbycal.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.validator.constraints.Email;
-
-import org.springframework.data.elasticsearch.annotations.Document;
-import javax.persistence.*;
-import org.hibernate.annotations.Type;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.joda.time.DateTime;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+import org.springframework.data.elasticsearch.annotations.Document;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A user.
@@ -23,220 +33,209 @@ import org.joda.time.DateTime;
 @Document(indexName="user")
 public class User extends AbstractAuditingEntity implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+	private static final long serialVersionUID = -7599942749171988866L;
 
-    @NotNull
-    @Pattern(regexp = "^[a-z0-9]*$")
-    @Size(min = 5, max = 50)
-    @Column(length = 50, unique = true, nullable = false)
-    private String login;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Long id;
 
-    @JsonIgnore
-    @NotNull
-    @Size(min = 60, max = 60) 
-    @Column(length = 60)
-    private String password;
+	@NotNull
+	@Pattern(regexp = "^[a-z0-9]*$")
+	@Size(min = 5, max = 50)
+	@Column(length = 50, unique = true, nullable = false)
+	private String login;
 
-    @Size(max = 50)
-    @Column(name = "first_name", length = 50)
-    private String firstName;
+	@JsonIgnore
+	@NotNull
+	@Size(min = 60, max = 60)
+	@Column(length = 60)
+	private String password;
 
-    @Size(max = 50)
-    @Column(name = "last_name", length = 50)
-    private String lastName;
+	@Size(max = 50)
+	@Column(name = "first_name", length = 50)
+	private String firstName;
 
-    @Email
-    @Size(max = 100)
-    @Column(length = 100, unique = true)
-    private String email;
+	@Size(max = 50)
+	@Column(name = "last_name", length = 50)
+	private String lastName;
 
-    @Column(nullable = false)
-    private boolean activated = false;
+	@Email
+	@Size(max = 100)
+	@Column(length = 100, unique = true)
+	private String email;
 
-    @Size(min = 2, max = 5)
-    @Column(name = "lang_key", length = 5)
-    private String langKey;
+	@Column(nullable = false)
+	private boolean activated = false;
 
-    @Size(max = 20)
-    @Column(name = "activation_key", length = 20)
-    @JsonIgnore
-    private String activationKey;
+	@Size(min = 2, max = 5)
+	@Column(name = "lang_key", length = 5)
+	private String langKey;
 
-    @Size(max = 20)
-    @Column(name = "reset_key", length = 20)
-    private String resetKey;
+	@Size(max = 20)
+	@Column(name = "activation_key", length = 20)
+	@JsonIgnore
+	private String activationKey;
 
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    @Column(name = "reset_date", nullable = true)
-    private DateTime resetDate = null;
+	@Size(max = 20)
+	@Column(name = "reset_key", length = 20)
+	private String resetKey;
 
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "JHI_USER_AUTHORITY",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "name")})
-    private Set<Authority> authorities = new HashSet<>();
+	@Column(name = "reset_date", nullable = true)
+	private ZonedDateTime resetDate = null;
 
-    @JsonIgnore
-    @ManyToMany(cascade=CascadeType.ALL)
-    @JoinTable(
-            name = "USER_ALIAS",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "alias_name", referencedColumnName = "alias")})
-    private Set<Alias> aliases = new HashSet<>();
+	@JsonIgnore
+	@ManyToMany
+	@JoinTable(name = "JHI_USER_AUTHORITY", joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "authority_name", referencedColumnName = "name") })
+	private Set<Authority> authorities = new HashSet<>();
 
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
-    private Set<PersistentToken> persistentTokens = new HashSet<>();
-    
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
-    private Set<Meeting> meetings = new HashSet<>();
+	@JsonIgnore
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "USER_ALIAS", joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "alias_name", referencedColumnName = "alias") })
+	private Set<Alias> aliases = new HashSet<>();
 
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+	private Set<PersistentToken> persistentTokens = new HashSet<>();
 
-    public Long getId() {
-        return id;
-    }
+	@JsonIgnore
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+	private Set<Meeting> meetings = new HashSet<>();
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public String getLogin() {
-        return login;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setLogin(String login) {
-        this.login = login;
-    }
+	public String getLogin() {
+		return login;
+	}
 
-    public String getPassword() {
-        return password;
-    }
+	public void setLogin(String login) {
+		this.login = login;
+	}
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public String getFirstName() {
-        return firstName;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public String getLastName() {
-        return lastName;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public boolean getActivated() {
-        return activated;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public void setActivated(boolean activated) {
-        this.activated = activated;
-    }
+	public boolean getActivated() {
+		return activated;
+	}
 
-    public String getActivationKey() {
-        return activationKey;
-    }
+	public void setActivated(boolean activated) {
+		this.activated = activated;
+	}
 
-    public void setActivationKey(String activationKey) {
-        this.activationKey = activationKey;
-    }
+	public String getActivationKey() {
+		return activationKey;
+	}
 
-    public String getResetKey() {
-        return resetKey;
-    }
+	public void setActivationKey(String activationKey) {
+		this.activationKey = activationKey;
+	}
 
-    public void setResetKey(String resetKey) {
-        this.resetKey = resetKey;
-    }
+	public String getResetKey() {
+		return resetKey;
+	}
 
-    public DateTime getResetDate() {
-       return resetDate;
-    }
+	public void setResetKey(String resetKey) {
+		this.resetKey = resetKey;
+	}
 
-    public void setResetDate(DateTime resetDate) {
-       this.resetDate = resetDate;
-    }
+	public ZonedDateTime getResetDate() {
+		return resetDate;
+	}
 
-    public String getLangKey() {
-        return langKey;
-    }
+	public void setResetDate(ZonedDateTime resetDate) {
+		this.resetDate = resetDate;
+	}
 
-    public void setLangKey(String langKey) {
-        this.langKey = langKey;
-    }
+	public String getLangKey() {
+		return langKey;
+	}
 
-    public Set<Authority> getAuthorities() {
-        return authorities;
-    }
+	public void setLangKey(String langKey) {
+		this.langKey = langKey;
+	}
 
-    public void setAuthorities(Set<Authority> authorities) {
-        this.authorities = authorities;
-    }
+	public Set<Authority> getAuthorities() {
+		return authorities;
+	}
 
-    public Set<PersistentToken> getPersistentTokens() {
-        return persistentTokens;
-    }
+	public void setAuthorities(Set<Authority> authorities) {
+		this.authorities = authorities;
+	}
 
-    public void setPersistentTokens(Set<PersistentToken> persistentTokens) {
-        this.persistentTokens = persistentTokens;
-    }
+	public Set<PersistentToken> getPersistentTokens() {
+		return persistentTokens;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+	public void setPersistentTokens(Set<PersistentToken> persistentTokens) {
+		this.persistentTokens = persistentTokens;
+	}
 
-        User user = (User) o;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
 
-        if (!login.equals(user.login)) {
-            return false;
-        }
+		User user = (User) o;
 
-        return true;
-    }
+		if (!login.equals(user.login)) {
+			return false;
+		}
 
-    @Override
-    public int hashCode() {
-        return login.hashCode();
-    }
+		return true;
+	}
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "login='" + login + '\'' +
-                ", password='" + password + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", activated='" + activated + '\'' +
-                ", langKey='" + langKey + '\'' +
-                ", activationKey='" + activationKey + '\'' +
-                "}";
-    }
+	@Override
+	public int hashCode() {
+		return login.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return "User{" + "login='" + login + '\'' + ", password='" + password
+				+ '\'' + ", firstName='" + firstName + '\'' + ", lastName='"
+				+ lastName + '\'' + ", email='" + email + '\''
+				+ ", activated='" + activated + '\'' + ", langKey='" + langKey
+				+ '\'' + ", activationKey='" + activationKey + '\'' + "}";
+	}
 
 	public Set<Alias> getAliases() {
 		return aliases;

@@ -9,6 +9,7 @@ angular.module('lobbycalApp')
         $scope.loadAll = function() {
             Alias.query({page: $scope.page, per_page: 20}, function(result, headers) {
                 $scope.links = ParseLinks.parse(headers('link'));
+                $scope.totalItems = headers('X-Total-Count');
                 $scope.aliass = result;
             });
         };

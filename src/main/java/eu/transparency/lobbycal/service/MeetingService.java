@@ -11,9 +11,9 @@ import javax.inject.Inject;
 
 import jodd.mail.MailAddress;
 import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.component.VEvent;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.audit.AuditEvent;
@@ -27,6 +27,7 @@ import eu.transparency.lobbycal.domain.Partner;
 import eu.transparency.lobbycal.domain.Submitter;
 import eu.transparency.lobbycal.domain.Tag;
 import eu.transparency.lobbycal.domain.User;
+import eu.transparency.lobbycal.domain.util.JSR310DateConverters;
 import eu.transparency.lobbycal.repository.AliasRepository;
 import eu.transparency.lobbycal.repository.MeetingRepository;
 import eu.transparency.lobbycal.repository.PartnerRepository;
@@ -45,8 +46,7 @@ import eu.transparency.lobbycal.security.SecurityUtils;
 @Service
 @Transactional
 public class MeetingService {
-	private static final Pattern TAG_PATTERN = Pattern
-			.compile("(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)");
+	private static final Pattern TAG_PATTERN = Pattern.compile("(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)");
 
 	private final Logger log = LoggerFactory.getLogger(MeetingService.class);
 
@@ -74,15 +74,12 @@ public class MeetingService {
 	@Inject
 	private AliasRepository aliasRepository;
 
-	public Optional<Meeting> processRequest(MailAddress[] mailTOsAndCCs,
-			MailAddress fromEmail, Calendar calendar, String emailSubject,
-			String encoding) {
+	public Optional<Meeting> processRequest(MailAddress[] mailTOsAndCCs, MailAddress fromEmail, Calendar calendar,
+			String emailSubject, String encoding) {
 		try {
-			log.debug(
-					"processing  meeting {} for to/cc {} and submitter {} for event {}",
-					calendar.getProperty("METHOD").getValue(), mailTOsAndCCs,
-					fromEmail.getEmail(), calendar.getComponent("VEVENT")
-							.getProperty("DTSTART").toString().trim());
+			log.debug("processing  meeting {} for to/cc {} and submitter {} for event {}",
+					calendar.getProperty("METHOD").getValue(), mailTOsAndCCs, fromEmail.getEmail(),
+					calendar.getComponent("VEVENT").getProperty("DTSTART").toString().trim());
 
 			// let's examine the senders
 
@@ -95,47 +92,40 @@ public class MeetingService {
 			User userWithAlias = null;
 			String ali = null;
 			for (MailAddress cc : mailTOsAndCCs) {
-				ali = cc.getEmail().subSequence(0, cc.getEmail().indexOf("@"))
-						.toString();
+				ali = cc.getEmail().subSequence(0, cc.getEmail().indexOf("@")).toString();
 				log.debug("Alias to check : " + ali);
 				Alias aliasOfUser = aliasRepository.findOneByAlias(ali);
 				if (aliasOfUser != null) {
 					userWithAlias = aliasOfUser.getUser();
-					log.debug("Alias belongs to  " + ali + " : User "
-							+ userWithAlias.getLogin() + " with email "
+					log.debug("Alias belongs to  " + ali + " : User " + userWithAlias.getLogin() + " with email "
 							+ userWithAlias.getEmail());
 					break;
 				}
 			}
 			if (userWithAlias == null) {
-				log.debug("Meeting not saved. Sent from " + fromEmail
-						+ " to an alias not corresponding to the sender:" + ali);
+				log.debug("Meeting not saved. Sent from " + fromEmail + " to an alias not corresponding to the sender:"
+						+ ali);
 				auditThis(
-						new String[] { "message=Meeting not saved. Sent from "
-								+ fromEmail
-								+ " to an alias not corresponding to the sender:  "
-								+ ali }, AuditEventPublisher.TYPE_MAIL);
+						new String[] { "message=Meeting not saved. Sent from " + fromEmail
+								+ " to an alias not corresponding to the sender:  " + ali },
+						AuditEventPublisher.TYPE_MAIL);
 				return Optional.empty();
 			}
 
 			// 2: check if there is a user whose email matches FROM....
-			Optional<User> user = userRepository.findOneByEmail(userWithAlias
-					.getEmail());
+			Optional<User> user = userRepository.findOneByEmail(userWithAlias.getEmail());
 			String submitterInFact = null;
 			if (user.isPresent()) {
 				log.debug("" + user.get().getEmail());
 				// .... or whose allowed submitter emails matches FROM
 				for (Submitter submitter : submitterRepository
-				// .findAllForCurrentUser()
+						// .findAllForCurrentUser()
 						.findAllByUserId(user.get().getId())) {
 					log.debug("Submitter email: " + submitter.getEmail());
-					if (submitter.getEmail().compareToIgnoreCase(
-							fromEmail.getEmail()) == 0) {
+					if (submitter.getEmail().compareToIgnoreCase(fromEmail.getEmail()) == 0) {
 						// submitter is still active?
-						log.info("First submitter " + submitter.getId()
-								+ " active ? " + submitter.getActive()
-								+ "   match in lobbycal for user login "
-								+ submitter.getUser().getLogin()
+						log.info("First submitter " + submitter.getId() + " active ? " + submitter.getActive()
+								+ "   match in lobbycal for user login " + submitter.getUser().getLogin()
 								+ " and alias " + ali);
 						if (submitter.getActive()) {
 							user = Optional.of(submitter.getUser());
@@ -144,19 +134,15 @@ public class MeetingService {
 							break;
 						} else {
 							log.warn("Submitter not active " + submitterInFact);
-							auditThis(
-									new String[] { "message=Submitter not active. "
-											+ submitterInFact
-											+ " "
-											+ submitter.getEmail() },
+							auditThis(new String[] {
+									"message=Submitter not active. " + submitterInFact + " " + submitter.getEmail() },
 									AuditEventPublisher.TYPE_MAIL);
 							return Optional.empty();
 						}
 					} else {
 						log.debug("mail sent from " + fromEmail);
-						log.debug(
-								"lobbycal user {} himself is sender with email {} ",
-								user.get().getLogin(), user.get().getEmail());
+						log.debug("lobbycal user {} himself is sender with email {} ", user.get().getLogin(),
+								user.get().getEmail());
 
 						submitterInFact = fromEmail.getEmail();
 					}
@@ -167,8 +153,8 @@ public class MeetingService {
 			} else {
 				log.debug("User {} does not exist ", fromEmail);
 				// submitterInFact = fromEmail.getEmail();
-				auditThis(
-						new String[] { "message=Meeting Processing not successfull. Unauthorized attempt to create a meeting entry sent from "
+				auditThis(new String[] {
+						"message=Meeting Processing not successfull. Unauthorized attempt to create a meeting entry sent from "
 								+ fromEmail.getEmail() },
 						AuditEventPublisher.TYPE_MAIL);
 
@@ -180,13 +166,15 @@ public class MeetingService {
 			// if
 			// (user.get().getEmail().toLowerCase().compareTo(fromEmail.getEmail().toLowerCase())
 			// != 0) {
-			// log.error("AUDIT EVENT: unauthorized attempt to create a meeting entry for "
+			// log.error("AUDIT EVENT: unauthorized attempt to create a meeting
+			// entry for "
 			// + user.get().getEmail()
 			// + " sent from "
 			// + fromEmail.getEmail());
 			// auditThis(
 			// new String[] {
-			// "message=Meeting Processing not successfull.Unauthorized attempt to create a meeting entry for "
+			// "message=Meeting Processing not successfull.Unauthorized attempt
+			// to create a meeting entry for "
 			// + user.get().getEmail()
 			// + " sent from "
 			// + fromEmail.getEmail() },
@@ -198,8 +186,7 @@ public class MeetingService {
 			if (!user.isPresent()) {
 				log.error("d'ough!");
 				log.debug("");
-				auditThis(
-						new String[] { "message=Meeting Processing not successfull. 	No corresponding user  " },
+				auditThis(new String[] { "message=Meeting Processing not successfull. 	No corresponding user  " },
 						AuditEventPublisher.TYPE_MAIL);
 
 				return Optional.empty();
@@ -208,32 +195,28 @@ public class MeetingService {
 				log.debug("Processing calendar");
 				// let's handle the calendar
 				Optional<Meeting> stored = meetingRepository
-						.findOneByUid(calendar.getComponent("VEVENT")
-								.getProperty("UID").getValue());
+						.findOneByUid(calendar.getComponent("VEVENT").getProperty("UID").getValue());
 				// apparently UID are not always identical, need to repeat
 				// delete
 				// block later
 				if (stored.isPresent()) {
 					log.debug("");
 					// DELETE
-					if (calendar.getProperty("METHOD").getValue()
-							.compareTo("CANCEL") == 0) {
+					if (calendar.getProperty("METHOD").getValue().compareTo("CANCEL") == 0) {
 						meetingRepository.delete(stored.get());
 						meetingSearchRepository.delete(stored.get());
 						log.debug("Meeting Deleted " + stored.get().getUid());
 
-						auditThis(new String[] { "message= Meeting deleted  "
-								+ stored.get().getTitle() + "  "
-								+ stored.get().getUser().getLogin() + " "
-								+ stored.get().getId().toString() }, null);
+						auditThis(
+								new String[] { "message= Meeting deleted  " + stored.get().getTitle() + "  "
+										+ stored.get().getUser().getLogin() + " " + stored.get().getId().toString() },
+								null);
 						return Optional.empty();
 					}
 					// UPDATE
-					if (calendar.getProperty("METHOD").getValue()
-							.compareTo("REQUEST") == 0) {
+					if (calendar.getProperty("METHOD").getValue().compareTo("REQUEST") == 0) {
 						log.debug("" + submitterInFact);
-						VEvent vevent = (VEvent) calendar
-								.getComponent("VEVENT");
+						VEvent vevent = (VEvent) calendar.getComponent("VEVENT");
 
 						log.info(vevent.getSummary().getValue());
 						stored.get().setUser(user.get());
@@ -241,23 +224,20 @@ public class MeetingService {
 						stored.get().setSubmitter(submitterInFact);
 						stored.get().setAliasUsed(ali);
 
-						stored.get().setStartDate(
-								new DateTime(vevent.getStartDate().getDate()));
-						stored.get().setEndDate(
-								new DateTime(vevent.getEndDate().getDate()));
-						byte ptext[] = vevent.getSummary().getValue()
-								.getBytes(encoding);
-						String value = new String(ptext, "UTF-8");
-						log.warn("Converted event summary from "
-								+ vevent.getSummary().getValue() + " in encoding " + encoding+ " to utf8: "
-								+ value);
+						stored.get().setStartDate(JSR310DateConverters.DateToZonedDateTimeConverter.INSTANCE
+								.convert(vevent.getStartDate().getDate()));
+						stored.get().setEndDate(JSR310DateConverters.DateToZonedDateTimeConverter.INSTANCE
+								.convert(vevent.getEndDate().getDate()));
+
+						String value = new String(vevent.getSummary().getValue());
+
+
 						parseSubject(value, stored.get());
 						meetingRepository.save(stored.get());
 						meetingSearchRepository.save(stored.get());
 						auditThis(
-								new String[] { "message=Meeting updated, ID: "
-										+ "  "
-										+ stored.get().getId().toString() },
+								new String[] {
+										"message=Meeting updated, ID: " + "  " + stored.get().getId().toString() },
 								null);
 
 						return Optional.of(stored.get());
@@ -269,12 +249,9 @@ public class MeetingService {
 					// adds 2
 					// cancellation .ics files to the cancelation email
 					// DELETE
-					if (calendar.getProperty("METHOD").getValue()
-							.compareTo("CANCEL") == 0) {
+					if (calendar.getProperty("METHOD").getValue().compareTo("CANCEL") == 0) {
 						log.debug("deleted event already");
-						auditThis(
-								new String[] { "message=Meeting was already deleted" },
-								null);
+						auditThis(new String[] { "message=Meeting was already deleted" }, null);
 
 						return Optional.empty();
 					}
@@ -287,25 +264,21 @@ public class MeetingService {
 					newMeeting.setUid(vevent.getUid().getValue());
 					newMeeting.setSubmitter(submitterInFact);
 					newMeeting.setAliasUsed(ali);
-					newMeeting.setStartDate(new DateTime(vevent.getStartDate()
-							.getDate()));
-					newMeeting.setEndDate(new DateTime(vevent.getEndDate()
-							.getDate()));
-					byte ptext[] = vevent.getSummary().getValue()
-							.getBytes(encoding);
-					String value = new String(ptext, "UTF-8");
-					log.warn("Converted event summary from "
-							+ vevent.getSummary().getValue() + " in encoding " + encoding+ " to utf8: "
-							+ value);
+					newMeeting.setStartDate(JSR310DateConverters.DateToZonedDateTimeConverter.INSTANCE
+							.convert(vevent.getStartDate().getDate()));
+					newMeeting.setEndDate(JSR310DateConverters.DateToZonedDateTimeConverter.INSTANCE
+							.convert(vevent.getEndDate().getDate()));
+					byte ptext[] = vevent.getSummary().getValue().getBytes(encoding);
+					String value = vevent.getSummary().getValue();
+
+				
+
 					parseSubject(value, newMeeting);
 					meetingRepository.save(newMeeting);
 					meetingSearchRepository.save(newMeeting);
 					log.debug("");
-					auditThis(
-							new String[] { "message=Created meeting "
-									+ newMeeting.getId().toString() + "  "
-									+ newMeeting.getTitle() + "  "
-									+ newMeeting.getUser().getLogin() }, null);
+					auditThis(new String[] { "message=Created meeting " + newMeeting.getId().toString() + "  "
+							+ newMeeting.getTitle() + "  " + newMeeting.getUser().getLogin() }, null);
 					return Optional.of(newMeeting);
 				}
 				log.debug("");
@@ -340,12 +313,11 @@ public class MeetingService {
 
 		String registerID = "";
 		String title = "";
-		String tridRegex = "(\\d{10}|\\d{11}|\\d{12})-\\d{2}";
+		String tridRegex = "(\\d{9}|\\d{10}|\\d{11}|\\d{12})-\\d{2}";
 
 		if (emailSubject.contains("*")) {
 			emailSubject = emailSubject.substring(0, emailSubject.indexOf("*"));
 		}
-		log.debug("\t\t\t" + emailSubject);
 
 		Matcher tagMatcher = TAG_PATTERN.matcher(emailSubject);
 		Set<Tag> tags = new HashSet<Tag>();
@@ -356,32 +328,26 @@ public class MeetingService {
 			aTag.seti18nKey(current);
 			aTag.setEn(current);
 			aTag.setId(current.hashCode() * 1l);
-			log.debug("adding tag " + aTag.geti18nKey() + ":"
-					+ tags.add(tagRepository.saveAndFlush(aTag)));
+			log.debug("adding tag " + aTag.geti18nKey() + ":" + tags.add(tagRepository.saveAndFlush(aTag)));
 
 		}
 		meeting.setTags(tags);
 
-		log.debug("\t\t\t" + emailSubject);
 		tagMatcher = TAG_PATTERN.matcher(emailSubject);
 		while (tagMatcher.find()) {
 			String current = (tagMatcher.group());
 			emailSubject = emailSubject.replace(current, "");
 
 		}
-		log.debug("\t\t\t" + emailSubject);
 
 		if (emailSubject.contains(":")) {
-			String givenPartnerName = emailSubject.substring(0,
-					emailSubject.lastIndexOf(":")).trim();
+			String givenPartnerName = emailSubject.substring(0, emailSubject.lastIndexOf(":")).trim();
 
-			givenPartnerName = givenPartnerName.substring(
-					givenPartnerName.lastIndexOf(":") + 1).trim();
+			givenPartnerName = givenPartnerName.substring(givenPartnerName.lastIndexOf(":") + 1).trim();
 
 			log.debug("Given partner name\t|" + givenPartnerName + "|");
 
-			title = emailSubject.substring(emailSubject.lastIndexOf(":"))
-					.replace(":", "").trim();
+			title = emailSubject.substring(emailSubject.lastIndexOf(":")).replace(":", "").trim();
 			Matcher m = Pattern.compile(tridRegex).matcher(title);
 			if (m.find()) {
 				title = title.substring(0, m.start()).replace(":", "").trim();
@@ -416,8 +382,8 @@ public class MeetingService {
 		}
 
 		AuditEvent event = new AuditEvent(
-				SecurityUtils.getCurrentLogin() == null ? "system"
-						: SecurityUtils.getCurrentLogin(), type, msg);
+				SecurityUtils.getCurrentUserLogin() == null ? "system" : SecurityUtils.getCurrentUserLogin(), type,
+				msg);
 		auditPublisher.publish(event);
 
 	}

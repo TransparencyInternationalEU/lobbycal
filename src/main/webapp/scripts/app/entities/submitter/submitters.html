@@ -2,12 +2,22 @@
 
     <h2 translate="lobbycalApp.submitter.home.title">Submitters</h2>
 
+	<jh-alert></jh-alert>
     <div class="container">
         <div class="row">
             <div class="col-md-4">
                 <button class="btn btn-primary" data-toggle="modal" data-target="#saveSubmitterModal" ng-click="clear()">
                     <span class="glyphicon glyphicon-flash"></span> <span translate="lobbycalApp.submitter.home.createLabel">Create a new Submitter</span>
                 </button>
+            </div>
+            <div class="col-md-8">
+                <form name="searchForm" class="form-inline">
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="searchQuery" id="searchQuery" placeholder="query">
+                    </div>
+                    <button class="btn btn-info" ng-click="search()"><span class="glyphicon glyphicon-search"></span> <span>Search a Submitter</span>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -105,7 +115,7 @@
         <table class="table table-striped"  >
             <thead>
                 <tr>
-                    <th has-role="ROLE_ADMIN">ID</th>
+                    <th has-authority="ROLE_ADMIN">ID</th>
                     <th translate="lobbycalApp.submitter.email">Email</th>
                     <th translate="lobbycalApp.submitter.active">Active</th>
                     <th translate="lobbycalApp.submitter.user">User</th>
@@ -114,11 +124,11 @@
             </thead>
             <tbody>
                 <tr ng-repeat="submitter in submitters">
-                    <td has-role="ROLE_ADMIN"><a ui-sref="submitterDetail({id:submitter.id})">{{submitter.id}}</a></td>
-                    <td>{{submitter.email}}</td>
+                    <td has-authority="ROLE_ADMIN"><a ui-sref="submitterDetail({id:submitter.id})">{{submitter.id}}</a></td>
+                    <td title="{{submitter.email}}">{{ submitter.email | limitTo: 30 }}{{submitter.email.length > 30 ? '...' : ''}}</td>
                     <td>{{submitter.active}}</td>
-                    <td>{{submitter.user.email}}</td>
-                    <td>
+                    <td title="{{submitter.user.email}}">{{submitter.user.login}}</td>
+                    <td align="right">
                         <button type="submit"
                                 ui-sref="submitterDetail({id:submitter.id})"
                                 class="btn btn-info btn-sm">
@@ -138,13 +148,9 @@
                 </tr>
             </tbody>
         </table>
-        <nav>
-            <ul class="pager">
-                <li ng-show="links['first']" ng-click="loadPage(links['first'])"><a href="">&lt;&lt;</a></li>
-                <li ng-show="links['prev']" ng-click="loadPage(links['prev'])"><a href="">&lt;</a></li>
-                <li ng-show="links['next']" ng-click="loadPage(links['next'])"><a href="">&gt;</a></li>
-                <li ng-show="links['last']" ng-click="loadPage(links['last'])"><a href="">&gt;&gt;</a></li>
-            </ul>
-        </nav>
+        <div class="text-center">
+		<uib-pagination class="pagination-sm" total-items="totalItems"
+			ng-model="page" ng-change="loadAll()"></uib-pagination>
+	</div>
     </div>
 </div>

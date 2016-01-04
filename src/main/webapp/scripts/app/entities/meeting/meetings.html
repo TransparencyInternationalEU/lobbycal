@@ -1,26 +1,36 @@
-
 <h2 translate="lobbycalApp.meeting.home.title">Meetings</h2>
 
+<jh-alert></jh-alert>
 <div class="container">
 	<div class="row">
 		<div class="col-md-2">
-			<button has-role="ROLE_USER" class="btn btn-primary"
+			<button has-authority="ROLE_USER" class="btn btn-primary"
 				data-toggle="modal" data-target="#saveMeetingModal"
 				ng-click="clear()">
 				<span class="glyphicon glyphicon-flash"></span> <span
-					translate="lobbycalApp.meeting.home.createLabel">Create a new
-					Meeting</span>
+					translate="lobbycalApp.meeting.home.createLabel">Create a
+					new Meeting</span>
 			</button>
+		</div>
+		<div class="col-md-5 col-md-offset-3">
+			<form name="searchForm" class="form-inline">
+				<div class="form-group">
+					<input type="text" class="form-control" ng-model="searchQuery"
+						id="searchQuery" placeholder="query">
+				</div>
+				<button class="btn btn-info" ng-click="search()">
+					<span class="glyphicon glyphicon-search"></span> <span>Search
+						a Meeting</span>
+				</button>
+			</form>
 		</div>
 	</div>
 </div>
-
 <div class="modal fade" id="saveMeetingModal" tabindex="-1"
 	role="dialog" aria-labelledby="myMeetingLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<form name="editForm" role="form" novalidate ng-submit="save()">
-
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal"
 						aria-hidden="true" ng-click="clear()">&times;</button>
@@ -56,34 +66,29 @@
 						<label translate="lobbycalApp.meeting.startDate">Start </label> <input
 							type="datetime-local" class="form-control" name="startDate"
 							ng-model="meeting.startDate" ng-model-options="{timezone: 'UTC'}">
-
 					</div>
 					<div class="form-group">
 						<label translate="lobbycalApp.meeting.endDate">End </label> <input
 							type="datetime-local" class="form-control" name="endDate"
 							ng-model="meeting.endDate" ng-model-options="{timezone: 'BST'}">
-
 					</div>
 					<!--  <div class="form-group">
                             <label translate="lobbycalApp.meeting.uid">Uid</label>
                             <input type="text" class="form-control" name="uid"
                                    ng-model="meeting.uid">
                     </div> -->
-
 					<div class="form-group">
 						<label translate="lobbycalApp.meeting.mTag"><span
 							class="glyphicon glyphicon-tags">mTag</span></label>*<input typ="text"
 							class="form-control" name="mTag" ng-model="meeting.mTag">
 						</input>
 					</div>
-
 					<div class="form-group">
 						<label translate="lobbycalApp.meeting.mPartner"><span
 							class="glyphicon glyphicon-tags">mPartner</span> </label>*<input
 							class="form-control" typ="text" name="mPartner"
 							ng-model="meeting.mPartner"> </input>
 					</div>
-
 					<div class="form-group">
 						* <sub translate="lobbycalApp.meeting.overwrite"></sub>
 					</div>
@@ -160,37 +165,41 @@
 <div class="table-responsive">
 	<table class="table table-striped">
 		<thead>
-			<tr>
+			<tr >
 				<!-- <th>ID</th> -->
-				<th translate="lobbycalApp.meeting.user">MEP</th>
+				<th><span translate="lobbycalApp.meeting.user">MEP</span></th>
 				<th translate="lobbycalApp.meeting.title">Title</th>
-				<th translate="lobbycalApp.meeting.mTag">Manual Tags</th>
-				<th translate="lobbycalApp.meeting.mPartner">Manual Partner</th>
+				<th translate="lobbycalApp.meeting.mTag">Tags</th>
 				<th translate="lobbycalApp.meeting.startDate">StartDate</th>
-				<th translate="lobbycalApp.meeting.endDate">EndDate</th>
+				<!--<th translate="lobbycalApp.meeting.endDate">EndDate</th> -->
+				<th translate="lobbycalApp.meeting.mPartner">Partner</th>
 				<!-- <th translate="lobbycalApp.meeting.uid">Uid</th> -->
-				<th translate="lobbycalApp.meeting.partner">Partner</th>
+				<!--<th translate="lobbycalApp.meeting.partner">Partner</th>-->
 				<th></th>
 			</tr>
 		</thead>
-		<tbody>
-			<tr ng-repeat="meeting in meetings">
+		<tbody >
+			<tr	ng-repeat="meeting in meetings">
 				<!-- <td><a ui-sref="meetingDetail({id:meeting.id})">{{meeting.id}}</a></td> -->
 
 				<td>{{meeting.userFirstName}} {{meeting.userLastName}}</td>
-				<td><a ui-sref="meetingDetail({id:meeting.id})">{{meeting.title}}</a></td>
-
-				<td>{{meeting.mTag}}</td>
-				<td>{{meeting.mPartner}}</td>
+				<td><a title="{{meeting.title}}"
+					ui-sref="meetingDetail({id:meeting.id})"> {{meeting.title |
+						limitTo: 25 }}{{meeting.title > 25 ? '...' : ''}} </a></td>
+				<td ng-if="meeting.mTag">{{meeting.mTag}}</td>
+				<td ng-if="!meeting.mTag"><span ng-repeat="tag in meeting.tags">{{tag.i18nKey}}&nbsp;</span></td>
 				<td>{{meeting.startDate | date:'dd/MM/yyyy HH:mm'}}</td>
-				<td>{{meeting.endDate | date:'dd/MM/yyyy HH:mm'}}</td>
+				<!-- <td>{{meeting.endDate | date:'dd/MM/yyyy HH:mm'}}</td>-->
 				<!-- <td>{{meeting.uid}}</td> -->
-				<td><span ng-repeat="p in meeting.partners"> <a
+				<td ng-if="meeting.mPartner">{{meeting.mPartner}}</td>
+				<td ng-if="!meeting.mPartner"><span
+					ng-repeat="p in meeting.partners"> <a
 						ng-if="p.transparencyRegisterID"
 						href="http://ec.europa.eu/transparencyregister/public/consultation/displaylobbyist.do?id={{p.transparencyRegisterID}}">{{p.name}}</a>
-						<span ng-if="!p.transparencyRegisterID"> {{p.name}}</span>
+						<!--  title="From E-Mail: '{{p.name}}'"--> <span
+						ng-if="!p.transparencyRegisterID"> {{p.name}}</span>
 				</span></td>
-				<td has-role="ROLE_USER">
+				<td align="right" width="27%" has-authority="ROLE_USER">
 					<button type="submit" ui-sref="meetingDetail({id:meeting.id})"
 						class="btn btn-info btn-sm">
 						<span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span
@@ -210,17 +219,9 @@
 			</tr>
 		</tbody>
 	</table>
-	<nav>
-		<ul class="pager">
-			<li ng-show="links['first']" ng-click="loadPage(links['first'])"><a
-				href="">&lt;&lt;</a></li>
-			<li ng-show="links['prev']" ng-click="loadPage(links['prev'])"><a
-				href="">&lt;</a></li>
-			<li ng-show="links['next']" ng-click="loadPage(links['next'])"><a
-				href="">&gt;</a></li>
-			<li ng-show="links['last']" ng-click="loadPage(links['last'])"><a
-				href="">&gt;&gt;</a></li>
-		</ul>
-	</nav>
+	<div class="text-center">
+		<uib-pagination class="pagination-sm" total-items="totalItems"
+			ng-model="page" ng-change="loadAll()"></uib-pagination>
+	</div>
 </div>
 </div>

@@ -1,5 +1,31 @@
 package eu.transparency.lobbycal.web.rest;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+
+import jodd.util.RandomString;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.codahale.metrics.annotation.Timed;
 
 import eu.transparency.lobbycal.domain.Alias;
@@ -9,28 +35,7 @@ import eu.transparency.lobbycal.security.AuthoritiesConstants;
 import eu.transparency.lobbycal.security.SecurityUtils;
 import eu.transparency.lobbycal.web.rest.util.PaginationUtil;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import jodd.util.RandomString;
 import static org.elasticsearch.index.query.QueryBuilders.*;
-
 /**
  * REST controller for managing Alias.
  */
@@ -91,7 +96,7 @@ public class AliasResource {
                                   @RequestParam(value = "per_page", required = false) Integer limit)
         throws URISyntaxException {
     	Page<Alias> page;
-		if (SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
+		if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
     		page = aliasRepository.findAll(PaginationUtil.generatePageRequest(offset, limit));
     	}else{
     		page = aliasRepository.findAllForCurrentUser(PaginationUtil.generatePageRequest(offset, limit));
@@ -140,7 +145,7 @@ public class AliasResource {
     @Timed
     public List<Alias> search(@PathVariable String query) {
         return StreamSupport
-            .stream(aliasSearchRepository.search(queryString(query)).spliterator(), false)
+            .stream(aliasSearchRepository.search(queryStringQuery(query)).spliterator(), false)
             .collect(Collectors.toList());
     }
 }

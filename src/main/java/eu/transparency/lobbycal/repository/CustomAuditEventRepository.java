@@ -1,9 +1,10 @@
 package eu.transparency.lobbycal.repository;
 
-import eu.transparency.lobbycal.config.audit.AuditEventConverter;
-import eu.transparency.lobbycal.domain.PersistentAuditEvent;
+import java.util.Date;
+import java.util.List;
 
-import org.joda.time.LocalDateTime;
+import javax.inject.Inject;
+
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.boot.actuate.audit.AuditEventRepository;
 import org.springframework.context.annotation.Bean;
@@ -11,10 +12,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
-
-import java.util.Date;
-import java.util.List;
+import eu.transparency.lobbycal.config.audit.AuditEventConverter;
+import eu.transparency.lobbycal.domain.PersistentAuditEvent;
+import eu.transparency.lobbycal.domain.util.JSR310DateConverters;
+import eu.transparency.lobbycal.domain.util.JSR310DateConverters.DateToLocalDateTimeConverter;
 
 /**
  * Wraps an implementation of Spring Boot's AuditEventRepository.
@@ -41,7 +42,7 @@ public class CustomAuditEventRepository {
                     persistentAuditEvents = persistenceAuditEventRepository.findByPrincipal(principal);
                 } else {
                     persistentAuditEvents =
-                            persistenceAuditEventRepository.findByPrincipalAndAuditEventDateAfter(principal, new LocalDateTime(after));
+                            persistenceAuditEventRepository.findByPrincipalAndAuditEventDateAfter(principal,DateToLocalDateTimeConverter.INSTANCE.convert(after));
                 }
                 return auditEventConverter.convertToAuditEvent(persistentAuditEvents);
             }
@@ -52,7 +53,7 @@ public class CustomAuditEventRepository {
                 PersistentAuditEvent persistentAuditEvent = new PersistentAuditEvent();
                 persistentAuditEvent.setPrincipal(event.getPrincipal());
                 persistentAuditEvent.setAuditEventType(event.getType());
-                persistentAuditEvent.setAuditEventDate(new LocalDateTime(event.getTimestamp()));
+                persistentAuditEvent.setAuditEventDate(JSR310DateConverters.DateToLocalDateTimeConverter.INSTANCE.convert(event.getTimestamp())  );
                 persistentAuditEvent.setData(auditEventConverter.convertDataToStrings(event.getData()));
 
                 persistenceAuditEventRepository.save(persistentAuditEvent);

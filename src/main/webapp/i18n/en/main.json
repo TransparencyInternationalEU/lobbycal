@@ -1,0 +1,16 @@
+{
+    "main": {
+        "title": "Welcome to lobbyCal!",
+        "subtitle": "This is the lobbyCal server homepage",
+        "logged": {
+            "message": "You are logged in as user \"{{username}}\"."
+        },
+        "question": "If you have any question on lobbyCal:",
+       "plugin": "You can download the plugin for lobbycal here: ",
+        "link": {
+            "On duty": "Contact N.N. ",
+            "institution": "Find out more on the work of EFA / Greens"
+        }
+        
+    }
+}

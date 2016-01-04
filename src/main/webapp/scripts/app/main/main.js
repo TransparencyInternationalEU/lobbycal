@@ -7,7 +7,7 @@ angular.module('lobbycalApp')
                 parent: 'site',
                 url: '/',
                 data: {
-                    roles: []
+                    authorities: []
                 },
                 views: {
                     'content@': {

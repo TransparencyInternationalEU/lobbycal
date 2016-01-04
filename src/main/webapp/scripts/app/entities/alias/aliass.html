@@ -2,6 +2,7 @@
 
 	<h2 translate="lobbycalApp.alias.home.title">Aliass</h2>
 
+	<jh-alert></jh-alert>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-4">
@@ -12,173 +13,183 @@
 						Alias</span>
 				</button>
 			</div>
-		</div>
-	</div>
-
-	<div class="modal fade" id="saveAliasModal" tabindex="-1" role="dialog"
-		aria-labelledby="myAliasLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form name="editForm" role="form" novalidate ng-submit="save()"
-					show-validation>
-
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal"
-							aria-hidden="true" ng-click="clear()">&times;</button>
-						<h4 class="modal-title" id="myAliasLabel"
-							translate="lobbycalApp.alias.home.createOrEditLabel">Create
-							or edit a Alias</h4>
+			<div class="col-md-8">
+				<form name="searchForm" class="form-inline">
+					<div class="form-group">
+						<input type="text" class="form-control" ng-model="searchQuery"
+							id="searchQuery" placeholder="query">
 					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<label>ID</label> <input type="text" class="form-control"
-								name="id" ng-model="alias.id" readonly>
-						</div>
-
-						<div class="form-group">
-							<label translate="lobbycalApp.alias.alias">Alias</label> <input
-								type="text" class="form-control" name="alias"
-								ng-model="alias.alias" id="randomfield" required ng-minlength="6"
-								ng-maxlength="20">
-							<p>During registration, a default alias corresponding to your
-								login name has been created. We recommend to change the alias to
-								a random string. Please mind that you have to send future
-								meeting invitations to the new alias.</p>
-							<div ng-show="editForm.alias.$invalid">
-								<p class="help-block" ng-show="editForm.alias.$error.required"
-									translate="entity.validation.required">This field is
-									required.</p>
-								<p class="help-block" ng-show="editForm.alias.$error.minlength"
-									translate="entity.validation.minlength" translate-value-min="6">
-									This field is required to be at least 6 characters.</p>
-								<p class="help-block" ng-show="editForm.alias.$error.maxlength"
-									translate="entity.validation.maxlength"
-									translate-value-max="20">This field cannot be longer than
-									20 characters.</p>
-							</div>
-						</div>
-						<div ng-show="false" class="form-group">
-							<label translate="lobbycalApp.alias.active">Active</label> <input
-								type="checkbox" class="form-control" name="active"
-								ng-model="alias.active">
-						</div>
-
-
-						<div class="form-group">
-							<label translate="lobbycalApp.alias.user">User</label> <select
-								class="form-control" name="user" ng-model="alias.user.id"
-								ng-options="user.id as user.email for user in users">
-							</select>
-						</div>
-					</div>
-
-					<div class="modal-footer">
-
-						<button type="button" class="btn btn-default"  value="Create Random String"
-							ng-click="randomize();">
-							<span class="glyphicon glyphicon-lock"></span>&nbsp;<span
-								translate="Set random alias">Set random alias</span>
-						</button>
-
-
-
-
-
-						<button type="button" class="btn btn-default" data-dismiss="modal"
-							ng-click="clear()">
-							<span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span
-								translate="entity.action.cancel">Cancel</span>
-						</button>
-						<button type="submit" ng-disabled="editForm.$invalid"
-							class="btn btn-primary">
-							<span class="glyphicon glyphicon-save"></span>&nbsp;<span
-								translate="entity.action.save">Save</span>
-						</button>
-					</div>
+					<button class="btn btn-info" ng-click="search()">
+						<span class="glyphicon glyphicon-search"></span> <span>Search
+							an Alias</span>
+					</button>
 				</form>
 			</div>
 		</div>
 	</div>
+</div>
 
-	<div class="modal fade" id="deleteAliasConfirmation">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form name="deleteForm" ng-submit="confirmDelete(alias.id)">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal"
-							aria-hidden="true" ng-click="clear()">&times;</button>
-						<h4 class="modal-title" translate="entity.delete.title">Confirm
-							delete operation</h4>
+<div class="modal fade" id="saveAliasModal" tabindex="-1" role="dialog"
+	aria-labelledby="myAliasLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form name="editForm" role="form" novalidate ng-submit="save()"
+				show-validation>
+
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true" ng-click="clear()">&times;</button>
+					<h4 class="modal-title" id="myAliasLabel"
+						translate="lobbycalApp.alias.home.createOrEditLabel">Create
+						or edit a Alias</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>ID</label> <input type="text" class="form-control"
+							name="id" ng-model="alias.id" readonly>
 					</div>
-					<div class="modal-body">
-						<p translate="lobbycalApp.alias.delete.question"
-							translate-values="{id: '{{alias.id}}'}">Are you sure you want
-							to delete this Alias?</p>
+
+					<div class="form-group">
+						<label translate="lobbycalApp.alias.alias">Alias</label> <input
+							type="text" class="form-control" name="alias"
+							ng-model="alias.alias" id="randomfield" required ng-minlength="6"
+							ng-maxlength="20">
+						<p>During registration, a default alias corresponding to your
+							login name has been created. We recommend to change the alias to
+							a random string. Please mind that you have to send future meeting
+							invitations to the new alias.</p>
+						<div ng-show="editForm.alias.$invalid">
+							<p class="help-block" ng-show="editForm.alias.$error.required"
+								translate="entity.validation.required">This field is
+								required.</p>
+							<p class="help-block" ng-show="editForm.alias.$error.minlength"
+								translate="entity.validation.minlength" translate-value-min="6">
+								This field is required to be at least 6 characters.</p>
+							<p class="help-block" ng-show="editForm.alias.$error.maxlength"
+								translate="entity.validation.maxlength" translate-value-max="20">This
+								field cannot be longer than 20 characters.</p>
+						</div>
 					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal"
-							ng-click="clear()">
-							<span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span
-								translate="entity.action.cancel">Cancel</span>
-						</button>
-						<button type="submit" ng-disabled="deleteForm.$invalid"
-							class="btn btn-danger">
-							<span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span
-								translate="entity.action.delete">Delete</span>
-						</button>
+					<div ng-show="false" class="form-group">
+						<label translate="lobbycalApp.alias.active">Active</label> <input
+							type="checkbox" class="form-control" name="active"
+							ng-model="alias.active">
 					</div>
-				</form>
-			</div>
+
+
+					<div class="form-group">
+						<label translate="lobbycalApp.alias.user">User</label> <select
+							class="form-control" name="user" ng-model="alias.user.id"
+							ng-options="user.id as user.email for user in users">
+						</select>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+
+					<button type="button" class="btn btn-default"
+						value="Create Random String" ng-click="randomize();">
+						<span class="glyphicon glyphicon-lock"></span>&nbsp;<span
+							translate="Set random alias">Set random alias</span>
+					</button>
+
+
+
+
+
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						ng-click="clear()">
+						<span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span
+							translate="entity.action.cancel">Cancel</span>
+					</button>
+					<button type="submit" ng-disabled="editForm.$invalid"
+						class="btn btn-primary">
+						<span class="glyphicon glyphicon-save"></span>&nbsp;<span
+							translate="entity.action.save">Save</span>
+					</button>
+				</div>
+			</form>
 		</div>
 	</div>
+</div>
 
-	<div class="table-responsive">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th>ID</th>
-					<th translate="lobbycalApp.alias.alias">Alias</th>
-					<th translate="lobbycalApp.alias.active">Active</th>
-					<th translate="lobbycalApp.alias.user">user</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr ng-repeat="alias in aliass">
-					<td><a ui-sref="aliasDetail({id:alias.id})">{{alias.id}}</a></td>
-					<td>{{alias.alias}}</td>
-					<td>{{alias.active}}</td>
-					<td>{{alias.user.email}}</td>
-					<td>
-						<button type="submit" ui-sref="aliasDetail({id:alias.id})"
-							class="btn btn-info btn-sm">
-							<span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span
-								translate="entity.action.view"> View</span>
-						</button>
-						<button type="submit" ng-click="showUpdate(alias.id)"
-							class="btn btn-primary btn-sm">
-							<span class="glyphicon glyphicon-pencil"></span>&nbsp;<span
-								translate="entity.action.edit"> Edit</span>
-						</button>
-						<button type="submit" ng-click="delete(alias.id)"
-							class="btn btn-danger btn-sm">
-							<span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span
-								translate="entity.action.delete"> Delete</span>
-						</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<nav>
-			<ul class="pager">
-				<li ng-show="links['first']" ng-click="loadPage(links['first'])"><a
-					href="">&lt;&lt;</a></li>
-				<li ng-show="links['prev']" ng-click="loadPage(links['prev'])"><a
-					href="">&lt;</a></li>
-				<li ng-show="links['next']" ng-click="loadPage(links['next'])"><a
-					href="">&gt;</a></li>
-				<li ng-show="links['last']" ng-click="loadPage(links['last'])"><a
-					href="">&gt;&gt;</a></li>
-			</ul>
-		</nav>
+<div class="modal fade" id="deleteAliasConfirmation">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form name="deleteForm" ng-submit="confirmDelete(alias.id)">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true" ng-click="clear()">&times;</button>
+					<h4 class="modal-title" translate="entity.delete.title">Confirm
+						delete operation</h4>
+				</div>
+				<div class="modal-body">
+					<p translate="lobbycalApp.alias.delete.question"
+						translate-values="{id: '{{alias.id}}'}">Are you sure you want
+						to delete this Alias?</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						ng-click="clear()">
+						<span class="glyphicon glyphicon-ban-circle"></span>&nbsp;<span
+							translate="entity.action.cancel">Cancel</span>
+					</button>
+					<button type="submit" ng-disabled="deleteForm.$invalid"
+						class="btn btn-danger">
+						<span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span
+							translate="entity.action.delete">Delete</span>
+					</button>
+				</div>
+			</form>
+		</div>
 	</div>
+</div>
+
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th translate="lobbycalApp.alias.alias">Alias</th>
+				<th translate="lobbycalApp.alias.active">Active</th>
+				<th translate="lobbycalApp.alias.user">user</th>
+				<th width="50%"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="alias in aliass">
+				<td><a ui-sref="aliasDetail({id:alias.id})">{{alias.id}}</a></td>
+				<td title="{{alias.alias}}">{{ alias.alias | limitTo: 25
+					}}{{alias.alias.length > 25 ? '...' : ''}}</td>
+				<td title="{{alias.active}}"><span class="label label-danger"
+					ng-show="!alias.active" style="cursor: pointer;">Deactivated</span>
+					<span class="label label-success" ng-show="alias.active"
+					style="cursor: pointer;">Activated</span></td>
+				<td title="{{alias.user.email}}">{{ alias.user.email | limitTo:
+					20 }}{{alias.user.email.length > 20 ? '...' : ''}}</td>
+				<td align="right">
+					<button type="submit" ui-sref="aliasDetail({id:alias.id})"
+						class="btn btn-info btn-sm">
+						<span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span
+							translate="entity.action.view"> View</span>
+					</button>
+					<button type="submit" ng-click="showUpdate(alias.id)"
+						class="btn btn-primary btn-sm">
+						<span class="glyphicon glyphicon-pencil"></span>&nbsp;<span
+							translate="entity.action.edit"> Edit</span>
+					</button>
+					<button type="submit" ng-click="delete(alias.id)"
+						class="btn btn-danger btn-sm">
+						<span class="glyphicon glyphicon-remove-circle"></span>&nbsp;<span
+							translate="entity.action.delete"> Delete</span>
+					</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="text-center">
+		<uib-pagination class="pagination-sm" total-items="totalItems"
+			ng-model="page" ng-change="loadAll()"></uib-pagination>
+	</div>
+</div>
 </div>

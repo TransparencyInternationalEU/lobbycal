@@ -1,7 +1,5 @@
 package eu.transparency.lobbycal.config;
 
-import eu.transparency.lobbycal.config.locale.AngularCookieLocaleResolver;
-
 import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.MessageSource;
@@ -14,6 +12,8 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
+import eu.transparency.lobbycal.config.locale.AngularCookieLocaleResolver;
+
 @Configuration
 public class LocaleConfiguration extends WebMvcConfigurerAdapter implements EnvironmentAware {
 
@@ -21,7 +21,7 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
 
     @Override
     public void setEnvironment(Environment environment) {
-        this.propertyResolver = new RelaxedPropertyResolver(environment, "spring.messageSource.");
+        this.propertyResolver = new RelaxedPropertyResolver(environment, "spring.messages.");
     }
 
     @Bean(name = "localeResolver")
@@ -36,7 +36,7 @@ public class LocaleConfiguration extends WebMvcConfigurerAdapter implements Envi
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
         messageSource.setBasename("classpath:/i18n/messages");
         messageSource.setDefaultEncoding("UTF-8");
-        messageSource.setCacheSeconds(propertyResolver.getProperty("cacheSeconds", Integer.class, 1));
+        messageSource.setCacheSeconds(propertyResolver.getProperty("cache-seconds", Integer.class, -1));
         return messageSource;
     }
 

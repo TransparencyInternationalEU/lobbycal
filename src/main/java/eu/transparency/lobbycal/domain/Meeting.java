@@ -1,6 +1,7 @@
 package eu.transparency.lobbycal.domain;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -17,17 +18,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
 import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import eu.transparency.lobbycal.domain.util.CustomDateTimeDeserializer;
-import eu.transparency.lobbycal.domain.util.CustomDateTimeSerializer;
+import eu.transparency.lobbycal.domain.util.JSR310DateTimeSerializer;
+import eu.transparency.lobbycal.domain.util.JSR310LocalDateDeserializer;
+
 
 /**
  * A Meeting.
@@ -37,11 +35,13 @@ import eu.transparency.lobbycal.domain.util.CustomDateTimeSerializer;
 @Document(indexName = "meeting")
 public class Meeting implements Serializable {
 
+	
+	public Meeting (){}
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@Column(name = "title", length=1000)
+	@Column(name = "title", length = 1000)
 	private String title;
 
 	@Column(name = "submitter")
@@ -50,17 +50,11 @@ public class Meeting implements Serializable {
 	@Column(name = "alias_used")
 	private String aliasUsed;
 
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	@JsonSerialize(using = CustomDateTimeSerializer.class)
-	@JsonDeserialize(using = CustomDateTimeDeserializer.class)
 	@Column(name = "start_date")
-	private DateTime startDate;
+	private ZonedDateTime startDate;
 
-	@Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-	@JsonSerialize(using = CustomDateTimeSerializer.class)
-	@JsonDeserialize(using = CustomDateTimeDeserializer.class)
 	@Column(name = "end_date")
-	private DateTime endDate;
+	private ZonedDateTime endDate;
 
 	@Column(name = "u_id")
 	private String uid;
@@ -81,7 +75,7 @@ public class Meeting implements Serializable {
 	 */
 	@Column(name = "mTag")
 	private String mTag;
-	
+
 	@Column(name = "mPartner")
 	private String mPartner;
 
@@ -133,19 +127,19 @@ public class Meeting implements Serializable {
 		this.aliasUsed = aliasUsed;
 	}
 
-	public DateTime getStartDate() {
+	public ZonedDateTime getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(DateTime startDate) {
+	public void setStartDate(ZonedDateTime startDate) {
 		this.startDate = startDate;
 	}
 
-	public DateTime getEndDate() {
+	public ZonedDateTime getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(DateTime endDate) {
+	public void setEndDate(ZonedDateTime endDate) {
 		this.endDate = endDate;
 	}
 

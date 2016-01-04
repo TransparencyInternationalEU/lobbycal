@@ -7,14 +7,14 @@
 
     <table class="table table-condensed table-striped table-bordered table-responsive">
         <thead>
-        <tr title="click to order">
+        <tr title="click to order"> 
             <th ng-click="predicate = 'name'; reverse=!reverse"><span translate="logs.table.name">Name</span></th>
             <th ng-click="predicate = 'level'; reverse=!reverse"><span translate="logs.table.level">Level</span></th>
         </tr>
         </thead>
 
         <tr ng-repeat="logger in loggers | filter:filter | orderBy:predicate:reverse">
-            <td><small>{{logger.name | characters:140}}</small></td>
+            <td title="{{logger.name}}" ><small>{{logger.name.substring(0,60)}}{{logger.name.length > 60 ? '...' : ''}}</small></td>
             <td>
                 <button ng-click="changeLevel(logger.name, 'TRACE')" ng-class="(logger.level=='TRACE') ? 'btn-danger' : 'btn-default'" class="btn btn-default btn-xs">TRACE</button>
                 <button ng-click="changeLevel(logger.name, 'DEBUG')" ng-class="(logger.level=='DEBUG') ? 'btn-warning' : 'btn-default'" class="btn btn-default btn-xs">DEBUG</button>

@@ -22,12 +22,13 @@
             <div class="alert alert-danger" ng-show="doNotMatch" translate="global.messages.error.dontmatch">
                 The password and its confirmation do not match!
             </div>
-
+        </div>
+        <div class="col-md-8 col-md-offset-2">
             <form ng-show="!success" name="form" role="form" novalidate ng-submit="register()" show-validation>
 
                 <div class="form-group">
-                    <label translate="global.form.username">Login</label>
-                    <input type="text" class="form-control" name="login" placeholder="{{'global.form.username.placeholder' | translate}}"
+                    <label class="control-label" for="login" translate="global.form.username">Username</label>
+                    <input type="text" class="form-control" id="login" name="login" placeholder="{{'global.form.username.placeholder' | translate}}"
                            ng-model="registerAccount.login" ng-minlength=5 ng-maxlength=50 ng-pattern="/^[a-z0-9]*$/" required>
                     <div ng-show="form.login.$dirty && form.login.$invalid">
                         <p class="help-block"
@@ -36,21 +37,21 @@
                         </p>
                         <p class="help-block"
                                ng-show="form.login.$error.minlength" translate="register.messages.validate.login.minlength">
-                            Your login is required to be at least 5 characters.
+                            Your username is required to be at least 5 characters.
                         </p>
                         <p class="help-block"
                                ng-show="form.login.$error.maxlength" translate="register.messages.validate.login.maxlength">
-                            Your login cannot be longer than 50 characters.
+                            Your username cannot be longer than 50 characters.
                         </p>
                         <p class="help-block"
                                ng-show="form.login.$error.pattern" translate="register.messages.validate.login.pattern">
-                            Your login can only contain lower-case letters and digits.
+                            Your username can only contain lower-case letters and digits.
                     </p>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label translate="global.form.email">E-mail</label>
-                    <input type="email" class="form-control" name="email" placeholder="{{'global.form.email.placeholder' | translate}}"
+                    <label class="control-label" for="email" translate="global.form.email">E-mail</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="{{'global.form.email.placeholder' | translate}}"
                            ng-model="registerAccount.email" ng-minlength=5 ng-maxlength=100 required>
                     <div ng-show="form.email.$dirty && form.email.$invalid">
                         <p class="help-block"
@@ -72,8 +73,8 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label translate="global.form.newpassword">New password</label>
-                    <input type="password" class="form-control" name="password" placeholder="{{'global.form.newpassword.placeholder' | translate}}"
+                    <label class="control-label" for="password" translate="global.form.newpassword">New password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="{{'global.form.newpassword.placeholder' | translate}}"
                            ng-model="registerAccount.password" ng-minlength=5 ng-maxlength=50 required>
                     <div ng-show="form.password.$dirty && form.password.$invalid">
                         <p class="help-block"
@@ -92,8 +93,8 @@
                     <password-strength-bar password-to-check="registerAccount.password"></password-strength-bar>
                 </div>
                 <div class="form-group">
-                    <label translate="global.form.confirmpassword">New password confirmation</label>
-                    <input type="password" class="form-control" name="confirmPassword" placeholder="{{'global.form.confirmpassword.placeholder' | translate}}"
+                    <label class="control-label" for="confirmPassword" translate="global.form.confirmpassword">New password confirmation</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="{{'global.form.confirmpassword.placeholder' | translate}}"
                            ng-model="confirmPassword" ng-minlength=5 ng-maxlength=50 required>
                     <div ng-show="form.confirmPassword.$dirty && form.confirmPassword.$invalid">
                         <p class="help-block"

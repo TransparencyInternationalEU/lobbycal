@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="4 seconds">
-	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
+<!DOCTYPE xml>
+<configuration scan="true" scanPeriod="4 seconds"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="logback.xsd">
+	<appender  name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder  >
 			<charset>utf-8</charset>
 
 			<Pattern>%d{HH:mm:ss} %-5level (%file:%line\) : %msg%n</Pattern>
@@ -15,22 +18,29 @@
 	<appender name="FILE"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${logback.logdir}/logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>${HOME:-${USERPROFILE}}/log/logFile.%d{yyyy-MM-dd}.log
+			</fileNamePattern>
 			<maxHistory>90</maxHistory>
 		</rollingPolicy>
 		<encoder>
 			<charset>utf-8</charset>
-			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] (%file:%line\): %msg%n</Pattern>
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level [%thread] (%file:%line\):
+				%msg%n</Pattern>
 		</encoder>
 	</appender>
-	<logger name="org.hibernate" level="ERROR" />
-	<logger name="eu.transparency.lobbycal" level="DEBUG" />
-	<logger name="eu.transparency.lobbycal.aop.logging" level="DEBUG" />
 	
+	<logger name="io.swagger.models.parameters.AbstractSerializableParameter" level="ERROR" />
+	<logger name="org.hibernate" level="ERROR" />
+	<logger name="springfox.documentation" level="ERROR" />
+	<logger name="net.sf.ehcache" level="ERROR" />
+	<logger name="org.eclipse" level="ERROR" />
+	<logger name="eu.transparency.lobbycal" level="DEBUG" />
+	<logger name="eu.transparency.lobbycal.aop.logging.LoggingAspect"
+		level="INFO" />
+	<logger name="eu.transparency.lobbycal.web.rest.mapper.*" level="INFO" />
 	<logger name="org.jodd" level="INFO" />
 	<logger name="net.fortuna.ical4j" level="INFO" />
-	<logger name="javax.activation" level="WARN" />
-	<logger name="javax.mail" level="WARN" />
+	<logger name="javax" level="WARN" />
 	<logger name="com.sun.mail" level="WARN" />
 	<logger name="javax.xml.bind" level="WARN" />
 	<logger name="ch.qos.logback" level="WARN" />

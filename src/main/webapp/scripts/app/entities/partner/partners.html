@@ -2,6 +2,7 @@
 
 	<h2 translate="lobbycalApp.partner.home.title">Partners</h2>
 
+	<jh-alert></jh-alert>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-4">
@@ -11,6 +12,18 @@
 						translate="lobbycalApp.partner.home.createLabel">Create a
 						new Partner</span>
 				</button>
+			</div>
+			<div class="col-md-8">
+				<form name="searchForm" class="form-inline">
+					<div class="form-group">
+						<input type="text" class="form-control" ng-model="searchQuery"
+							id="searchQuery" placeholder="query">
+					</div>
+					<button class="btn btn-info" ng-click="search()">
+						<span class="glyphicon glyphicon-search"></span> <span>Search
+							a Partner</span>
+					</button>
+				</form>
 			</div>
 		</div>
 	</div>
@@ -102,10 +115,10 @@
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th>ID</th>
+					<th >ID</th>
 					<th translate="lobbycalApp.partner.name">Name</th>
 					<th translate="lobbycalApp.partner.transparencyRegisterID">TransparencyRegisterID</th>
-					<th></th>
+					<th width="35%"></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -115,7 +128,7 @@
 					<td><a
 						href="http://ec.europa.eu/transparencyregister/public/consultation/displaylobbyist.do?id={{partner.transparencyRegisterID}}">{{partner.transparencyRegisterID}}</a>
 					</td>
-					<td>
+					<td align="right">
 						<button type="submit" ui-sref="partnerDetail({id:partner.id})"
 							class="btn btn-info btn-sm">
 							<span class="glyphicon glyphicon-eye-open"></span>&nbsp;<span
@@ -135,17 +148,9 @@
 				</tr>
 			</tbody>
 		</table>
-		<nav>
-			<ul class="pager">
-				<li ng-show="links['first']" ng-click="loadPage(links['first'])"><a
-					href="">&lt;&lt;</a></li>
-				<li ng-show="links['prev']" ng-click="loadPage(links['prev'])"><a
-					href="">&lt;</a></li>
-				<li ng-show="links['next']" ng-click="loadPage(links['next'])"><a
-					href="">&gt;</a></li>
-				<li ng-show="links['last']" ng-click="loadPage(links['last'])"><a
-					href="">&gt;&gt;</a></li>
-			</ul>
-		</nav>
+		<div class="text-center">
+			<uib-pagination class="pagination-sm" total-items="totalItems"
+				ng-model="page" ng-change="loadAll()"></uib-pagination>
+		</div>
 	</div>
 </div>

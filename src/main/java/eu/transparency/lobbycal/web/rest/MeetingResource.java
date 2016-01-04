@@ -1,7 +1,5 @@
 package eu.transparency.lobbycal.web.rest;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryString;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -11,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -24,7 +23,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.datatables.mapping.DataTablesInput;
 import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
 import org.springframework.data.jpa.datatables.parameter.SearchParameter;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -50,6 +48,8 @@ import eu.transparency.lobbycal.security.SecurityUtils;
 import eu.transparency.lobbycal.web.rest.dto.MeetingDTO;
 import eu.transparency.lobbycal.web.rest.mapper.MeetingMapper;
 import eu.transparency.lobbycal.web.rest.util.PaginationUtil;
+
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Meeting.
@@ -90,7 +90,7 @@ public class MeetingResource {
 		}
 		Meeting meeting = meetingMapper.meetingDTOToMeeting(meetingDTO);
 		meetingRepository.save(meeting);
-		meetingSearchRepository.save(meeting);
+		 meetingSearchRepository.save(meeting);
 		return ResponseEntity.created(
 				new URI("/api/meetings/" + meetingDTO.getId())).build();
 	}
@@ -108,7 +108,7 @@ public class MeetingResource {
 		}
 		Meeting meeting = meetingMapper.meetingDTOToMeeting(meetingDTO);
 		meetingRepository.save(meeting);
-		meetingSearchRepository.save(meeting);
+		 meetingSearchRepository.save(meeting);
 		return ResponseEntity.ok().build();
 	}
 
@@ -124,9 +124,9 @@ public class MeetingResource {
 			throws URISyntaxException {
 		Page<Meeting> page;
 
-		if (SecurityUtils.isUserInRole(AuthoritiesConstants.USER)) {
+		if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.USER)) {
 			log.info("Self can always see past and future meetings, admin sees all");
-			if (!SecurityUtils.isUserInRole(AuthoritiesConstants.ADMIN)) {
+			if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
 				page = meetingRepository.findAllForCurrentUser(PaginationUtil
 						.generatePageRequest(offset, limit));
 			} else {
@@ -174,7 +174,7 @@ public class MeetingResource {
 			throws URISyntaxException {
 		Page<Meeting> page;
 		log.trace("");
-		if (SecurityUtils.isUserInRole(AuthoritiesConstants.USER)) {
+		if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.USER)) {
 			page = meetingRepository.getForMEP(
 					PaginationUtil.generatePageRequest(offset, limit), id);
 
@@ -245,20 +245,24 @@ public class MeetingResource {
 	@JsonView(DataTablesOutput.View.class)
 	@Transactional(readOnly = true)
 	public DataTablesOutput<MeetingDTO> tableEndPoint(@PathVariable String ids,
-			@Valid DataTablesInput input) throws URISyntaxException {
+			@Valid  DataTablesInput input) throws URISyntaxException {
 		log.info(ids);
 		SearchParameter sp = input.getSearch();
 		log.warn(sp.toString() + ": " + sp.getValue());
 		DataTablesOutput<Meeting> dto = null;
-		Specification<Meeting> searchSpec = MeetingSpecifications.hasTitle(sp
-				.getValue().toLowerCase(), ids);
+
 		Collection<Long> mepIds = new ArrayList<Long>();
 		Iterator<String> sMepIds = Arrays.asList(ids.split(",")).iterator();
 		while (sMepIds.hasNext()) {
 			mepIds.add(Long.parseLong(sMepIds.next()));
 		}
-		dto = meetingDTRepository.findAll(input, searchSpec);
-//		log.info(dto.getData().size() + "");
+		String sf = sp.getValue().toLowerCase();
+
+		dto = meetingDTRepository.findAll(input,
+				MeetingSpecifications.hasTerm(sf, mepIds));
+		if (dto.getData() != null) {
+			log.info(dto.getData().size() + "");
+		}
 		DataTablesOutput<MeetingDTO> dtor = new DataTablesOutput<MeetingDTO>();
 		try {
 			if (dto != null && dto.getData() != null
@@ -316,7 +320,7 @@ public class MeetingResource {
 	public List<Meeting> search(@PathVariable String query) {
 		log.info(query);
 		return StreamSupport.stream(
-				meetingSearchRepository.search(queryString(query))
+				meetingSearchRepository.search(queryStringQuery(query))
 						.spliterator(), false).collect(Collectors.toList());
-	}
+ }
 }

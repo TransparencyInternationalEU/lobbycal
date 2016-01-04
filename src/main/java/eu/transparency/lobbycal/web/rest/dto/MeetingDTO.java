@@ -1,34 +1,29 @@
 package eu.transparency.lobbycal.web.rest.dto;
 
+import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import eu.transparency.lobbycal.domain.util.CustomDateTimeDeserializer;
-import eu.transparency.lobbycal.domain.util.CustomDateTimeSerializer;
-import eu.transparency.lobbycal.domain.util.CustomLocalDateSerializer;
-import eu.transparency.lobbycal.domain.util.ISO8601LocalDateDeserializer;
-
-import org.joda.time.LocalDate;
-import org.joda.time.DateTime;
-import org.springframework.data.jpa.datatables.mapping.DataTablesOutput;
-
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Objects;
-
-import javax.persistence.Column;
+import eu.transparency.lobbycal.domain.util.JSR310DateTimeSerializer;
+import eu.transparency.lobbycal.domain.util.JSR310LocalDateDeserializer;
 
 /**
  * A DTO for the Meeting entity.
  */
 public class MeetingDTO implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -8986664418417104916L;
+
+	public MeetingDTO() {
+	}
 
 	@JsonView(DataTablesOutput.View.class)
 	private Long id;
@@ -38,14 +33,12 @@ public class MeetingDTO implements Serializable {
 	private String submitter;
 	@JsonView(DataTablesOutput.View.class)
 	private String aliasUsed;
+
 	@JsonView(DataTablesOutput.View.class)
-	@JsonSerialize(using = CustomDateTimeSerializer.class)
-	@JsonDeserialize(using = CustomDateTimeDeserializer.class)
-	private DateTime startDate;
+	private ZonedDateTime startDate;
+
 	@JsonView(DataTablesOutput.View.class)
-	@JsonSerialize(using = CustomDateTimeSerializer.class)
-	@JsonDeserialize(using = CustomDateTimeDeserializer.class)
-	private DateTime endDate;
+	private ZonedDateTime endDate;
 
 	private String uid;
 	@JsonView(DataTablesOutput.View.class)
@@ -60,13 +53,15 @@ public class MeetingDTO implements Serializable {
 	private String userFirstName;
 	@JsonView(DataTablesOutput.View.class)
 	private String userLastName;
-	
-	
+
 	/**
 	 * @since lobbcal v.2
 	 */
 	@JsonView(DataTablesOutput.View.class)
 	private String mTag;
+
+	@JsonView(DataTablesOutput.View.class)
+	private String mPartner;
 
 	public String getmTag() {
 		return mTag;
@@ -83,10 +78,6 @@ public class MeetingDTO implements Serializable {
 	public void setmPartner(String mPartner) {
 		this.mPartner = mPartner;
 	}
-
-	@JsonView(DataTablesOutput.View.class)
-	private String mPartner;
-
 
 	public Long getId() {
 		return id;
@@ -136,19 +127,19 @@ public class MeetingDTO implements Serializable {
 		this.aliasUsed = aliasUsed;
 	}
 
-	public DateTime getStartDate() {
+	public ZonedDateTime getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(DateTime startDate) {
+	public void setStartDate(ZonedDateTime startDate) {
 		this.startDate = startDate;
 	}
 
-	public DateTime getEndDate() {
+	public ZonedDateTime getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(DateTime endDate) {
+	public void setEndDate(ZonedDateTime endDate) {
 		this.endDate = endDate;
 	}
 

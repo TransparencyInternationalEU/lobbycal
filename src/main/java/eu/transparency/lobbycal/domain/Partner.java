@@ -1,25 +1,21 @@
 package eu.transparency.lobbycal.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import eu.transparency.lobbycal.domain.util.CustomDateTimeDeserializer;
-import eu.transparency.lobbycal.domain.util.CustomDateTimeSerializer;
-import eu.transparency.lobbycal.domain.util.CustomLocalDateSerializer;
-import eu.transparency.lobbycal.domain.util.ISO8601LocalDateDeserializer;
-
-import org.hibernate.annotations.Type;
-import org.joda.time.LocalDate;
-import org.joda.time.DateTime;
-import org.springframework.data.elasticsearch.annotations.Document;
-
-import javax.persistence.*;
-
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import org.springframework.data.elasticsearch.annotations.Document;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A Partner.

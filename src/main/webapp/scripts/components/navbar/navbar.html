@@ -41,14 +41,17 @@
 					</span>
 				</a>
 					<ul class="dropdown-menu">
-						<li ui-sref-active="active"  ng-switch-when="true"><a ui-sref="submitter"><span
+						<li ui-sref-active="active" ng-switch-when="true"><a
+							ui-sref="submitter"><span
 								class="fa fa-at"></span> &#xA0;<span
 								translate="global.menu.entities.submitter">Submitter</span></a></li>
-						<li ui-sref-active="active"  ng-switch-when="true"><a ui-sref="alias"><span
-								class="glyphicon glyphicon-asterisk"></span> &#xA0;<span
-								translate="global.menu.entities.alias">Alias</span></a></li>
+
 						<li ui-sref-active="active" ng-switch-when="true"><a
-							ui-sref="settings"><span class="glyphicon glyphicon-wrench"></span>
+							ui-sref="alias"><span class="glyphicon glyphicon-asterisk "></span>
+								&#xA0;<span translate="global.menu.entities.alias">Alias</span></a></li>
+						<li ui-sref-active="active" ng-switch-when="true">
+						<li ui-sref-active="active" ng-switch-when="true"><a
+							ui-sref="settings"> <span class="glyphicon glyphicon-wrench"></span>
 								&#xA0;<span translate="global.menu.account.settings">Settings</span></a></li>
 						<li ui-sref-active="active" ng-switch-when="true"><a
 							ui-sref="password"><span class="glyphicon glyphicon-lock"></span>
@@ -70,7 +73,7 @@
 								translate="global.menu.account.register">Register</span></a></li>
 					</ul></li>
 				<li ng-class="{active: $state.includes('admin')}"
-					ng-switch-when="true" has-role="ROLE_ADMIN"
+					ng-switch-when="true" has-authority="ROLE_ADMIN"
 					class="dropdown pointer"><a class="dropdown-toggle"
 					data-toggle="dropdown" href=""> <span> <span
 							class="glyphicon glyphicon-tower"></span> <span
@@ -79,7 +82,50 @@
 					</span>
 				</a>
 					<ul class="dropdown-menu">
+						<li ui-sref-active="active"><a ui-sref="user-management"
+							data-toggle="collapse" data-target=".navbar-collapse.in"><span
+								class="glyphicon glyphicon-user"></span> &#xA0;<span
+								translate="global.menu.admin.user-management">User
+									management</span></a></li>
+
 						<li ui-sref-active="active"><a ui-sref="tag"><span
+								class="fa fa-tags"></span> &#xA0;<span
+								translate="global.menu.entities.tag">Tag</span></a></li>
+						<li ui-sref-active="active"><a ui-sref="partner"><span
+								class="fa fa-users"></span> &#xA0;<span
+								translate="global.menu.entities.partner">Partner</span></a></li>
+
+						<li ui-sref-active="active"><a ui-sref="metrics"
+							data-toggle="collapse" data-target=".navbar-collapse.in"><span
+								class="glyphicon glyphicon-dashboard"></span> &#xA0;<span
+								translate="global.menu.admin.metrics">Metrics</span></a></li>
+						<li ui-sref-active="active"><a ui-sref="health"
+							data-toggle="collapse" data-target=".navbar-collapse.in"><span
+								class="glyphicon glyphicon-heart"></span> &#xA0;<span
+								translate="global.menu.admin.health">Health</span></a></li>
+						<li ui-sref-active="active"><a ui-sref="configuration"
+							data-toggle="collapse" data-target=".navbar-collapse.in"><span
+								class="glyphicon glyphicon-list-alt"></span> &#xA0;<span
+								translate="global.menu.admin.configuration">Configuration</span></a></li>
+						<li ui-sref-active="active"><a ui-sref="audits"
+							data-toggle="collapse" data-target=".navbar-collapse.in"><span
+								class="glyphicon glyphicon-bell"></span> &#xA0;<span
+								translate="global.menu.admin.audits">Audits</span></a></li>
+						<li ui-sref-active="active"><a ui-sref="logs"
+							data-toggle="collapse" data-target=".navbar-collapse.in"><span
+								class="glyphicon glyphicon-tasks"></span> &#xA0;<span
+								translate="global.menu.admin.logs">Logs</span></a></li>
+						<li ui-sref-active="active"><a ui-sref="docs"
+							data-toggle="collapse" data-target=".navbar-collapse.in"><span
+								class="glyphicon glyphicon-book"></span> &#xA0;<span
+								translate="global.menu.admin.apidocs">API</span></a></li>
+						<!--	
+                   		
+                   		NUU:      <li ng-hide="inProduction"><a href='/console' target="_tab" data-toggle="collapse" data-target=".navbar-collapse.in"><span class="glyphicon glyphicon-hdd"></span>
+                            &#xA0;<span translate="global.menu.admin.database">Database</span></a></li>
+			
+						OLDE:
+			<li ui-sref-active="active"><a ui-sref="tag"><span
 								class="fa fa-tags"></span> &#xA0;<span
 								translate="global.menu.entities.tag">tag</span></a></li>
 						<li ui-sref-active="active"><a ui-sref="partner"><span
@@ -102,7 +148,7 @@
 								translate="global.menu.admin.logs">Logs</span></a></li>
 						<li ui-sref-active="active"><a ui-sref="docs"><span
 								class="glyphicon glyphicon-book"></span> &#xA0;<span
-								translate="global.menu.admin.apidocs">API</span></a></li>
+								translate="global.menu.admin.apidocs">API</span></a></li>-->
 					</ul></li>
 				<li ui-sref-active="active" class="dropdown pointer"
 					ng-controller="LanguageController" style="display: none"><a

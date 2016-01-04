@@ -1,18 +1,26 @@
 package eu.transparency.lobbycal.config.audit;
 
-import eu.transparency.lobbycal.domain.PersistentAuditEvent;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.boot.actuate.audit.AuditEvent;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import eu.transparency.lobbycal.domain.PersistentAuditEvent;
 
-@Configuration
+@Component
 public class AuditEventConverter {
 
     /**
      * Convert a list of PersistentAuditEvent to a list of AuditEvent
+     *
      * @param persistentAuditEvents the list to convert
      * @return the converted list.
      */
@@ -20,16 +28,23 @@ public class AuditEventConverter {
         if (persistentAuditEvents == null) {
             return Collections.emptyList();
         }
-
         List<AuditEvent> auditEvents = new ArrayList<>();
-
         for (PersistentAuditEvent persistentAuditEvent : persistentAuditEvents) {
-            AuditEvent auditEvent = new AuditEvent(persistentAuditEvent.getAuditEventDate().toDate(), persistentAuditEvent.getPrincipal(),
-                    persistentAuditEvent.getAuditEventType(), convertDataToObjects(persistentAuditEvent.getData()));
-            auditEvents.add(auditEvent);
+            auditEvents.add(convertToAuditEvent(persistentAuditEvent));
         }
-
         return auditEvents;
+    }
+
+    /**
+     * Convert a PersistentAuditEvent to an AuditEvent
+     *
+     * @param persistentAuditEvent the event to convert
+     * @return the converted list.
+     */
+    public AuditEvent convertToAuditEvent(PersistentAuditEvent persistentAuditEvent) {
+        Instant instant = persistentAuditEvent.getAuditEventDate().atZone(ZoneId.systemDefault()).toInstant();
+        return new AuditEvent(Date.from(instant), persistentAuditEvent.getPrincipal(),
+            persistentAuditEvent.getAuditEventType(), convertDataToObjects(persistentAuditEvent.getData()));
     }
 
     /**
@@ -40,16 +55,12 @@ public class AuditEventConverter {
      */
     public Map<String, Object> convertDataToObjects(Map<String, String> data) {
         Map<String, Object> results = new HashMap<>();
-        
+
         if (data != null) {
             for (String key : data.keySet()) {
                 results.put(key, data.get(key));
             }
-        }else{
-        	
-       
         }
-
         return results;
     }
 
@@ -72,8 +83,10 @@ public class AuditEventConverter {
                     WebAuthenticationDetails authenticationDetails = (WebAuthenticationDetails) object;
                     results.put("remoteAddress", authenticationDetails.getRemoteAddress());
                     results.put("sessionId", authenticationDetails.getSessionId());
+                } else if (object != null) {
+                    results.put(key, object.toString());
                 } else {
-                    results.put(key, object==null? key : object.toString());
+                    results.put(key, "null");
                 }
             }
         }

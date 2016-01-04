@@ -1,9 +1,9 @@
 package eu.transparency.lobbycal.repository;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.joda.time.DateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import eu.transparency.lobbycal.domain.User;
@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findOneByActivationKey(String activationKey);
 
-	List<User> findAllByActivatedIsFalseAndCreatedDateBefore(DateTime dateTime);
+    List<User> findAllByActivatedIsFalseAndCreatedDateBefore(ZonedDateTime dateTime);
 
 	Optional<User> findOneByResetKey(String resetKey);
 
@@ -24,6 +24,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findOneByLogin(String login);
 
 	List<User> findAllByLogin(String login);
+	
+    Optional<User> findOneById(Long userId);
+
 
 	@Override
 	void delete(User t);

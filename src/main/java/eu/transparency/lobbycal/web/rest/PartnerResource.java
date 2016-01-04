@@ -1,25 +1,6 @@
 package eu.transparency.lobbycal.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-
-import eu.transparency.lobbycal.domain.Partner;
-import eu.transparency.lobbycal.repository.PartnerRepository;
-import eu.transparency.lobbycal.repository.search.PartnerSearchRepository;
-import eu.transparency.lobbycal.web.rest.dto.PartnerDTO;
-import eu.transparency.lobbycal.web.rest.mapper.PartnerMapper;
-import eu.transparency.lobbycal.web.rest.util.PaginationUtil;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import javax.inject.Inject;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,7 +10,31 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.codahale.metrics.annotation.Timed;
+
+import eu.transparency.lobbycal.domain.Partner;
+import eu.transparency.lobbycal.repository.PartnerRepository;
+import eu.transparency.lobbycal.repository.search.PartnerSearchRepository;
+import eu.transparency.lobbycal.web.rest.dto.PartnerDTO;
+import eu.transparency.lobbycal.web.rest.mapper.PartnerMapper;
+import eu.transparency.lobbycal.web.rest.util.PaginationUtil;
 
 /**
  * REST controller for managing Partner.
@@ -150,7 +155,7 @@ public class PartnerResource {
     @Timed
     public List<Partner> search(@PathVariable String query) {
         return StreamSupport
-            .stream(partnerSearchRepository.search(queryString(query)).spliterator(), false)
+            .stream(partnerSearchRepository.search(queryStringQuery(query)).spliterator(), false)
             .collect(Collectors.toList());
     }
 }

@@ -1,9 +1,24 @@
 'use strict';
 
 angular.module('lobbycalApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pascalprecht.translate', 
-    'ngResource', 'ui.router', 'ngCookies', 'ngCacheBuster', 'infinite-scroll'])
+    'ngResource', 'ngCookies', 'ngAria', 'ngCacheBuster', 'ngFileUpload',
+    'ui.bootstrap', 'ui.router',  'infinite-scroll', 'angular-loading-bar'])
 
     .run(function ($rootScope, $location, $window, $http, $state, $translate, Language, Auth, Principal, ENV, VERSION) {
+        // update the window title using params in the following
+        // precendence
+        // 1. titleKey parameter
+        // 2. $state.$current.data.pageTitle (current state page title)
+        // 3. 'global.title'
+        var updateTitle = function(titleKey) {
+            if (!titleKey && $state.$current.data && $state.$current.data.pageTitle) {
+                titleKey = $state.$current.data.pageTitle;
+            }
+            $translate(titleKey || 'global.title').then(function (title) {
+                $window.document.title = title;
+            });
+        };
+        
         $rootScope.ENV = ENV;
         $rootScope.VERSION = VERSION;
         $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams) {
@@ -24,21 +39,26 @@ angular.module('lobbycalApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
         $rootScope.$on('$stateChangeSuccess',  function(event, toState, toParams, fromState, fromParams) {
             var titleKey = 'global.title' ;
 
-            $rootScope.previousStateName = fromState.name;
-            $rootScope.previousStateParams = fromParams;
+            // Remember previous state unless we've been redirected to login or we've just
+            // reset the state memory after logout. If we're redirected to login, our
+            // previousState is already set in the authExpiredInterceptor. If we're going
+            // to login directly, we don't want to be sent to some previous state anyway
+            if (toState.name != 'login' && $rootScope.previousStateName) {
+              $rootScope.previousStateName = fromState.name;
+              $rootScope.previousStateParams = fromParams;
+            }
 
             // Set the page title key to the one configured in state or use default one
             if (toState.data.pageTitle) {
                 titleKey = toState.data.pageTitle;
             }
-            
-            $translate(titleKey).then(function (title) {
-                // Change window title with translated one
-                $window.document.title = title;
-            });
-            
+            updateTitle(titleKey);
         });
+        
+        // if the current translation changes, update the window title
+        $rootScope.$on('$translateChangeSuccess', function() { updateTitle(); });
 
+        
         $rootScope.back = function() {
             // If previous state is 'activate' or do not exist go to 'home'
             if ($rootScope.previousStateName === 'activate' || $state.get($rootScope.previousStateName) === null) {
@@ -48,7 +68,9 @@ angular.module('lobbycalApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
             }
         };
     })
-    .config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, $translateProvider, tmhDynamicLocaleProvider, httpRequestInterceptorCacheBusterProvider) {
+    .config(function ($stateProvider, $urlRouterProvider, $httpProvider, $locationProvider, $translateProvider, tmhDynamicLocaleProvider, httpRequestInterceptorCacheBusterProvider, AlertServiceProvider) {
+        // uncomment below to make alerts look like toast
+        //AlertServiceProvider.showAsToast(true);
 
         //enable CSRF
         $httpProvider.defaults.xsrfCookieName = 'CSRF-TOKEN';
@@ -74,11 +96,13 @@ angular.module('lobbycalApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
                 ],
                 translatePartialLoader: ['$translate', '$translatePartialLoader', function ($translate, $translatePartialLoader) {
                     $translatePartialLoader.addPart('global');
-                    $translatePartialLoader.addPart('language');
                 }]
             }
         });
 
+        $httpProvider.interceptors.push('errorHandlerInterceptor');
+        $httpProvider.interceptors.push('authExpiredInterceptor');
+        $httpProvider.interceptors.push('notificationInterceptor');
         
         // Initialize angular-translate
         $translateProvider.useLoader('$translatePartialLoader', {
@@ -88,9 +112,20 @@ angular.module('lobbycalApp', ['LocalStorageModule', 'tmh.dynamicLocale', 'pasca
         $translateProvider.preferredLanguage('en');
         $translateProvider.useCookieStorage();
         $translateProvider.useSanitizeValueStrategy('escaped');
+        $translateProvider.addInterpolation('$translateMessageFormatInterpolation');
 
         tmhDynamicLocaleProvider.localeLocationPattern('bower_components/angular-i18n/angular-locale_{{locale}}.js');
         tmhDynamicLocaleProvider.useCookieStorage();
         tmhDynamicLocaleProvider.storageKey('NG_TRANSLATE_LANG_KEY');
         
-    });
+    })
+    .config(['$urlMatcherFactoryProvider', function($urlMatcherFactory) {
+        $urlMatcherFactory.type('boolean', {
+            name : 'boolean',
+            decode: function(val) { return val == true ? true : val == "true" ? true : false },
+            encode: function(val) { return val ? 1 : 0; },
+            equals: function(a, b) { return this.is(a) && a === b; },
+            is: function(val) { return [true,false,0,1].indexOf(val) >= 0 },
+            pattern: /bool|true|0|1/
+        });
+    }]);;

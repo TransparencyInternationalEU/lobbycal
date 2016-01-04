@@ -10,6 +10,9 @@ angular.module('lobbycalApp')
                         data = angular.fromJson(data);
                         return data;
                     }
-                }
+                },
+                'save': { method:'POST' },
+                'update': { method:'PUT' },
+                'delete':{ method:'DELETE'}
             });
         });

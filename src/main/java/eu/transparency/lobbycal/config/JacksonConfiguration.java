@@ -1,25 +1,37 @@
 package eu.transparency.lobbycal.config;
 
-import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.fasterxml.jackson.datatype.joda.ser.DateTimeSerializer;
-import com.fasterxml.jackson.datatype.joda.ser.JacksonJodaFormat;
-import org.joda.time.DateTime;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.datetime.joda.DateTimeFormatterFactory;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import eu.transparency.lobbycal.domain.util.JSR310DateTimeSerializer;
+import eu.transparency.lobbycal.domain.util.JSR310LocalDateDeserializer;
 
 @Configuration
 public class JacksonConfiguration {
 
     @Bean
-    public JodaModule jacksonJodaModule() {
-        JodaModule module = new JodaModule();
-        DateTimeFormatterFactory formatterFactory = new DateTimeFormatterFactory();
-        formatterFactory.setIso(DateTimeFormat.ISO.DATE);
-        module.addSerializer(DateTime.class, new DateTimeSerializer(
-                new JacksonJodaFormat(formatterFactory.createDateTimeFormatter()
-                        .withZoneUTC())));
-        return module;
+    Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder() {
+        JavaTimeModule module = new JavaTimeModule();
+        module.addSerializer(OffsetDateTime.class, JSR310DateTimeSerializer.INSTANCE);
+        module.addSerializer(ZonedDateTime.class, JSR310DateTimeSerializer.INSTANCE);
+        module.addSerializer(LocalDateTime.class, JSR310DateTimeSerializer.INSTANCE);
+        module.addSerializer(Instant.class, JSR310DateTimeSerializer.INSTANCE);
+        module.addDeserializer(LocalDate.class, JSR310LocalDateDeserializer.INSTANCE);
+        return new Jackson2ObjectMapperBuilder()
+//                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                .indentOutput(true)
+                .findModulesViaServiceLoader(true)
+                .modulesToInstall(module);
     }
 }

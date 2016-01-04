@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" name="CM1"
+	updateCheck="false" maxBytesLocalHeap="16M">
+
+	<!-- This is a default configuration, it is re-configured by the CacheConfiguration 
+		Spring Bean, using the properties from the resources/config/*.yml files. -->
+
+	<diskStore path="java.io.tmpdir" />
+
+	<defaultCache eternal="false" overflowToDisk="false" />
+
+	<cache name="eu.transparency.lobbycal.domain.User"
+		timeToLiveSeconds="3600">
+	</cache>
+
+	<cache name="eu.transparency.lobbycal.domain.Meeting"
+		timeToLiveSeconds="3600">
+	</cache>
+
+	<cache name="eu.transparency.lobbycal.domain.Alias"
+		timeToLiveSeconds="3600">
+	</cache>
+
+	<cache name="eu.transparency.lobbycal.domain.Submitter"
+		timeToLiveSeconds="3600">
+	</cache>
+
+	<cache name="eu.transparency.lobbycal.domain.Tag"
+		timeToLiveSeconds="3600">
+	</cache>
+
+	<cache name="eu.transparency.lobbycal.domain.Partner"
+		timeToLiveSeconds="3600">
+	</cache>
+	<cache name="eu.transparency.lobbycal.domain.Authority"
+		timeToLiveSeconds="3600">
+	</cache>
+
+	<cache name="eu.transparency.lobbycal.domain.User.authorities"
+		timeToLiveSeconds="3600">
+	</cache>
+
+	<cache name="eu.transparency.lobbycal.domain.PersistentToken"
+		timeToLiveSeconds="3600">
+	</cache>
+
+	<cache name="eu.transparency.lobbycal.domain.User.persistentTokens"
+		timeToLiveSeconds="3600">
+	</cache>
+</ehcache>

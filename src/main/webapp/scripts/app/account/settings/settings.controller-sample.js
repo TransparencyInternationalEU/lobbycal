@@ -6,6 +6,7 @@ angular.module('lobbycalApp')
         $scope.error = null;
         Principal.identity(true).then(function(account) {
             console.log(account.id);
+            console.log($scpoe.user.id);
 
             $scope.settingsAccount = account;
             $scope.pluginUrl = "https://yourhost/api/meetings/mep/"+account.id;

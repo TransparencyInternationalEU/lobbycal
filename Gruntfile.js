@@ -8,22 +8,28 @@ var parseVersionFromPomXml = function() {
     var version;
     var pomXml = fs.readFileSync('pom.xml', "utf8");
     parseString(pomXml, function (err, result){
-        version = result.project.version[0];
+        if (result.project.version && result.project.version[0]) {
+            version = result.project.version[0];
+        } else if (result.project.parent && result.project.parent[0] && result.project.parent[0].version && result.project.parent[0].version[0]) {
+            version = result.project.parent[0].version[0]
+        } else {
+            throw new Error('pom.xml is malformed. No version is defined');
+        }
     });
     return version;
 };
 
 // usemin custom step
-//var useminAutoprefixer = {
-//    name: 'autoprefixer',
-//    createConfig: function(context, block) {
-//        if(block.src.length === 0) {
-//            return {};
-//        } else {
-//            return require('grunt-usemin/lib/config/cssmin').createConfig(context, block) // Reuse cssmins createConfig
-//        }
-//    }
-//};
+var useminAutoprefixer = {
+    name: 'autoprefixer',
+    createConfig: function(context, block) {
+        if(block.src.length === 0) {
+            return {};
+        } else {
+            return require('grunt-usemin/lib/config/cssmin').createConfig(context, block) // Reuse cssmins createConfig
+        }
+    }
+};
 
 module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
@@ -81,9 +87,9 @@ module.exports = function (grunt) {
                         'src/main/webapp/**/*.html',
                         'src/main/webapp/**/*.json',
                         'src/main/webapp/assets/styles/**/*.css',
-                        'src/main/webapp/scripts/**/*.js',
-                        'src/main/webapp/assets/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
-                        'tmp/**/*.{css,js}'
+                        'src/main/webapp/scripts/**/*.+(js,html)',
+                        'src/main/webapp/assets/images/**/*.+(png,jpg,jpeg,gif,webp,svg)',
+                        'tmp/**/*.+(css,js)'
                     ]
                 }
             },
@@ -128,7 +134,7 @@ module.exports = function (grunt) {
                     src: [
                         '<%= yeoman.dist %>/scripts/**/*.js',
                         '<%= yeoman.dist %>/assets/styles/**/*.css',
-                        '<%= yeoman.dist %>/assets/images/**/*.{png,jpg,jpeg,gif,webp,svg}',
+                        '<%= yeoman.dist %>/assets/images/**/*.+(png,jpg,jpeg,gif,webp,svg)',
                         '<%= yeoman.dist %>/assets/fonts/*'
                     ]
                 }
@@ -168,7 +174,7 @@ module.exports = function (grunt) {
                 files: [{
                     expand: true,
                     cwd: 'src/main/webapp/assets/images',
-                    src: '**/*.{jpg,jpeg}', // we don't optimize PNG files as it doesn't work on Linux. If you are not on Linux, feel free to use '**/*.{png,jpg,jpeg}'
+                    src: '**/*.+(pg,jpeg)', // we don't optimize PNG files as it doesn't work on Linux. If you are not on Linux, feel free to use '**/*.{png,jpg,jpeg}'
                     dest: '<%= yeoman.dist %>/assets/images'
                 }]
             }
@@ -197,17 +203,7 @@ module.exports = function (grunt) {
                 options: {
                     module: 'lobbycalApp',
                     usemin: 'scripts/app.js',
-                    htmlmin:  {
-                        removeCommentsFromCDATA: true,
-                        // https://github.com/yeoman/grunt-usemin/issues/44
-                        collapseWhitespace: true,
-                        collapseBooleanAttributes: true,
-                        conservativeCollapse: true,
-                        removeAttributeQuotes: true,
-                        removeRedundantAttributes: true,
-                        useShortDoctype: true,
-                        removeEmptyAttributes: true
-                    }
+                    htmlmin: '<%= htmlmin.dist.options %>'
                 }
             }
         },
@@ -235,6 +231,18 @@ module.exports = function (grunt) {
         },
         // Put files not handled in other tasks here
         copy: {
+            fonts: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    flatten: true,
+                    cwd: 'src/main/webapp',
+                    dest: '<%= yeoman.dist %>/assets/fonts',
+                    src: [
+                      'bower_components/bootstrap/fonts/*.*'
+                    ]
+                }]
+            },
             dist: {
                 files: [{
                     expand: true,
@@ -344,8 +352,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'clean:server',
         'wiredep:test',
-        'ngconstant:dev',
-        'karma'
+        'ngconstant:dev'
     ]);
 
     grunt.registerTask('build', [
@@ -357,6 +364,7 @@ module.exports = function (grunt) {
         'imagemin',
         'svgmin',
         'concat',
+        'copy:fonts',
         'copy:dist',
         'ngAnnotate',
         'cssmin',
@@ -366,23 +374,6 @@ module.exports = function (grunt) {
         'usemin',
         'htmlmin'
     ]);
-
-	grunt.registerTask('appendSkipBower', 'Force skip of bower for Gradle', function () {
-
-		if (!grunt.file.exists(filepath)) {
-			// Assume this is a maven project
-			return true;
-		}
-
-		var fileContent = grunt.file.read(filepath);
-		var skipBowerIndex = fileContent.indexOf("skipBower=true");
-
-		if (skipBowerIndex != -1) {
-			return true;
-		}
-
-		grunt.file.write(filepath, fileContent + "\nskipBower=true\n");
-	});
 
     grunt.registerTask('buildOpenshift', [
         'test',
@@ -397,8 +388,6 @@ module.exports = function (grunt) {
         'buildcontrol:openshift'
     ]);
 
-    grunt.registerTask('default', [
-        'test',
-        'build'
-    ]);
+    
+    grunt.registerTask('default', ['serve']);
 };

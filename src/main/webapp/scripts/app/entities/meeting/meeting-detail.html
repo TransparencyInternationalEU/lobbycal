@@ -19,13 +19,13 @@
 					<td><input type="text" class="input-sm form-control"
 						value="{{meeting.title}}" readonly></td>
 				</tr>
-				<tr has-role="ROLE_ADMIN">
+				<tr has-authority="ROLE_ADMIN">
 					<td><i class="fa fa-envelope" /><span
 						translate="lobbycalApp.meeting.submitter" /></td>
 					<td><input type="text" class="input-sm form-control"
 						value="{{meeting.submitter}}" readonly></td>
 				</tr>
-				<tr has-role="ROLE_ADMIN">
+				<tr has-authority="ROLE_ADMIN">
 					<td><i class="fa  fa-envelope-o " /><span
 						translate="lobbycalApp.meeting.aliasUsed" /></td>
 					<td><input type="text" class="input-sm form-control"
@@ -48,7 +48,7 @@
 					<td><input type="text" class="input-sm form-control"
 						value="{{meeting.uid}}" readonly></td>
 				</tr> -->
-				<tr has-role="ROLE_ADMIN">
+				<tr has-authority="ROLE_ADMIN">
 					<td><i class=" glyphicon glyphicon-user"></i></td>
 					<td><input type="text" class="input-sm form-control"
 						value="{{meeting.userLogin}}" readonly></td>
