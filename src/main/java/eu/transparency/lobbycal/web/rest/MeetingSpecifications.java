@@ -1,5 +1,6 @@
 package eu.transparency.lobbycal.web.rest;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -37,8 +38,6 @@ public final class MeetingSpecifications {
 				query.distinct(true);
 				String containsLikePattern = getContainsLikePattern(searchTerm);
 				log.info(searchTerm + "," + mepIds);
-
-				query.distinct(true);
 				Root<Meeting> meeting = root;
 				Subquery<Partner> partnerSubQuery = query.subquery(Partner.class);
 				Root<Partner> partner = partnerSubQuery.from(Partner.class);
@@ -47,6 +46,18 @@ public final class MeetingSpecifications {
 				partnerSubQuery.where(cb.like(partner.get("name"), containsLikePattern),
 						cb.isMember(meeting, partnerMeetings));
 				return cb.exists(partnerSubQuery);
+			}
+
+		};
+
+	}
+	public static Specification<Meeting> past() {
+		return new Specification<Meeting>() {
+			@Override
+			public Predicate toPredicate(Root<Meeting> root,
+					CriteriaQuery<?> query, CriteriaBuilder cb) {
+				query.distinct(true);
+				return cb.lessThanOrEqualTo(root.<ZonedDateTime>get("startDate"),  ZonedDateTime.now());
 			}
 
 		};
@@ -63,8 +74,6 @@ public final class MeetingSpecifications {
 				query.distinct(true);
 				String containsLikePattern = getContainsLikePattern(searchTerm);
 				log.info(searchTerm + "," + mepIds);
-
-				query.distinct(true);
 				Root<Meeting> meeting = root;
 				Subquery<Tag> tagSubQuery = query.subquery(Tag.class);
 				Root<Tag> tag = tagSubQuery.from(Tag.class);
@@ -112,6 +121,8 @@ public final class MeetingSpecifications {
 		};
 
 	}
+	
+
 
 	private static Predicate andTogether(List<Predicate> predicates,
 			CriteriaBuilder cb) {

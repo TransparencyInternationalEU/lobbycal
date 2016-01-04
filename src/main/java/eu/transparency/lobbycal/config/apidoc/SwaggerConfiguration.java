@@ -29,7 +29,7 @@ import eu.transparency.lobbycal.config.JHipsterProperties;
  */
 @Configuration
 @EnableSwagger2
-@Profile({ "!" + Constants.SPRING_PROFILE_PRODUCTION })
+@Profile({ "!" + Constants.SPRING_PROFILE_FAST })
 public class SwaggerConfiguration {
 
 	private final Logger log = LoggerFactory

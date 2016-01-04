@@ -26,20 +26,17 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
 import eu.transparency.lobbycal.web.rest.MeetingSpecifications;
 
-public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends
-		SimpleJpaRepository<T, ID> implements CalendarDTRepository<T, ID> {
+public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID>
+		implements CalendarDTRepository<T, ID> {
 
-	private static final Logger log = LoggerFactory
-			.getLogger(CalendarDTRepositoryImpl.class);
+	private static final Logger log = LoggerFactory.getLogger(CalendarDTRepositoryImpl.class);
 
 	public CalendarDTRepositoryImpl(Class<T> domainClass, EntityManager em) {
 		super(domainClass, em);
 		log.info("");
 	}
 
-	public CalendarDTRepositoryImpl(
-			JpaEntityInformation<T, ?> entityInformation,
-			EntityManager entityManager) {
+	public CalendarDTRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {
 		super(entityInformation, entityManager);
 		log.info("");
 	}
@@ -51,8 +48,7 @@ public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends
 	}
 
 	@Override
-	public DataTablesOutput<T> findAll(DataTablesInput input,
-			Specification<T> additionalSpecification) {
+	public DataTablesOutput<T> findAll(DataTablesInput input, Specification<T> additionalSpecification) {
 		DataTablesOutput<T> output = new DataTablesOutput<T>();
 		output.setDraw(input.getDraw());
 
@@ -61,18 +57,16 @@ public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends
 			output.setRecordsTotal(count());
 
 			log.info("");
-			Page<T> data = findAll(
-					Specifications
-							.where(new DataTablesSpecification<T>(input))
-							.and(additionalSpecification)
-							.or((Specification<T>) MeetingSpecifications
-									.hasPartner(input.getSearch().getValue()
-											.toLowerCase(), null))
-							.and(additionalSpecification)
-							.or((Specification<T>) MeetingSpecifications
-									.hasTag(input.getSearch().getValue()
-											.toLowerCase(), null))
-							.and(additionalSpecification), getPageable(input));
+			Page<T> data = findAll(Specifications.where(new DataTablesSpecification<T>(input))
+					.and(additionalSpecification).and((Specification<T>) MeetingSpecifications.past())
+					.or((Specification<T>) MeetingSpecifications.hasPartner(input.getSearch().getValue().toLowerCase(),
+							null))
+					.and(additionalSpecification).and((Specification<T>) MeetingSpecifications.past())
+					.or((Specification<T>) MeetingSpecifications.hasTag(input.getSearch().getValue().toLowerCase(),
+							null))
+					.and(additionalSpecification)
+					.and((Specification<T>) MeetingSpecifications.past()
+							), getPageable(input));
 
 			log.info("");
 			output.setData(data.getContent());
@@ -117,7 +111,6 @@ public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends
 			input.setLength(Integer.MAX_VALUE);
 		}
 		log.info("");
-		return new PageRequest(input.getStart() / input.getLength(),
-				input.getLength(), sort);
+		return new PageRequest(input.getStart() / input.getLength(), input.getLength(), sort);
 	}
 }
