@@ -239,7 +239,8 @@ module.exports = function (grunt) {
                     cwd: 'src/main/webapp',
                     dest: '<%= yeoman.dist %>/assets/fonts',
                     src: [
-                      'bower_components/bootstrap/fonts/*.*'
+                      'bower_components/bootstrap/fonts/*.*',
+                      'bower_components/components-font-awesome/fonts/*.*'
                     ]
                 }]
             },
