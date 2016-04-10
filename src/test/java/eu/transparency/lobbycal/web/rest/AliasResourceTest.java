@@ -3,7 +3,6 @@ package eu.transparency.lobbycal.web.rest;
 import eu.transparency.lobbycal.Application;
 import eu.transparency.lobbycal.domain.Alias;
 import eu.transparency.lobbycal.repository.AliasRepository;
-import eu.transparency.lobbycal.repository.search.AliasSearchRepository;
 import eu.transparency.lobbycal.web.rest.AliasResource;
 
 import org.junit.Before;
@@ -57,8 +56,6 @@ public class AliasResourceTest {
     @Inject
     private AliasRepository aliasRepository;
 
-    @Inject
-    private AliasSearchRepository aliasSearchRepository;
 
     private MockMvc restAliasMockMvc;
 
@@ -69,7 +66,6 @@ public class AliasResourceTest {
         MockitoAnnotations.initMocks(this);
         AliasResource aliasResource = new AliasResource();
         ReflectionTestUtils.setField(aliasResource, "aliasRepository", aliasRepository);
-        ReflectionTestUtils.setField(aliasResource, "aliasSearchRepository", aliasSearchRepository);
         this.restAliasMockMvc = MockMvcBuilders.standaloneSetup(aliasResource).build();
     }
 

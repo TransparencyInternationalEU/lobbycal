@@ -27,10 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.codahale.metrics.annotation.Timed;
 
 import eu.transparency.lobbycal.aop.audit.AuditEventPublisher;
+import eu.transparency.lobbycal.domain.Alias;
 import eu.transparency.lobbycal.domain.PersistentToken;
 import eu.transparency.lobbycal.domain.User;
+import eu.transparency.lobbycal.repository.AliasRepository;
 import eu.transparency.lobbycal.repository.PersistentTokenRepository;
 import eu.transparency.lobbycal.repository.UserRepository;
+import eu.transparency.lobbycal.repository.search.AliasSearchRepository;
 import eu.transparency.lobbycal.security.AuthoritiesConstants;
 import eu.transparency.lobbycal.security.SecurityUtils;
 import eu.transparency.lobbycal.service.MailService;
@@ -52,6 +55,12 @@ public class AccountResource {
 	private AuditEventPublisher auditPublisher;
 
 	@Inject
+	private AliasRepository aliasRepository;
+
+	@Inject
+	private AliasSearchRepository aliasSearchRepository;
+
+	@Inject
 	private UserRepository userRepository;
 
 	@Inject
@@ -68,57 +77,56 @@ public class AccountResource {
 	 */
 	@RequestMapping(value = "/register", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
 	@Timed
-	public ResponseEntity<?> registerAccount(
-			@Valid @RequestBody UserDTO userDTO, HttpServletRequest request) {
-		return userRepository
-				.findOneByLogin(userDTO.getLogin())
-				.map(user -> new ResponseEntity<>("login already in use",
-						HttpStatus.BAD_REQUEST))
-				.orElseGet(
-						() -> userRepository
-								.findOneByEmail(userDTO.getEmail())
-								.map(user -> new ResponseEntity<>(
-										"e-mail address already in use",
-										HttpStatus.BAD_REQUEST))
-								.orElseGet(
-										() -> {
-											User user = userService.createUserInformation(
-													userDTO.getLogin(), userDTO
-															.getPassword(),
-													userDTO.getFirstName(),
-													userDTO.getLastName(),
-													userDTO.getEmail()
-															.toLowerCase(),
-													userDTO.getLangKey());
-											String baseUrl = request
-													.getScheme() + // "http"
-													"://" + // "://"
-													request.getServerName() + // "myhost"
-													":" + // ":"
-													request.getServerPort() + // "80"
-													request.getContextPath(); // "/myContextPath"
-																				// or
-																				// ""
-																				// if
-																				// deployed
-																				// in
-																				// root
-																				// context
+	public ResponseEntity<?> registerAccount(@Valid
+	@RequestBody
+	UserDTO userDTO, HttpServletRequest request) {
 
-											mailService.sendActivationEmail(
-													user, baseUrl);
-											String[] sarr = { "message=Account created for "
-													+ user.getLogin() };
-											mailService.sendActivationEmail(
-													user, baseUrl);
-											AuditEvent event = new AuditEvent(
-													user.getLogin().toString(),
-													AuditEventPublisher.TYPE_USER,
-													sarr);
-											auditPublisher.publish(event);
-											return new ResponseEntity<>(
-													HttpStatus.CREATED);
-										}));
+		log.info("");
+
+		return userRepository.findOneByLogin(userDTO.getLogin())
+				.map(user -> new ResponseEntity<>("login already in use", HttpStatus.BAD_REQUEST))
+				.orElseGet(() -> userRepository.findOneByEmail(userDTO.getEmail())
+						.map(user -> new ResponseEntity<>("e-mail address already in use", HttpStatus.BAD_REQUEST))
+						.orElseGet(() -> {
+							User user = userService.createUserInformation(userDTO.getLogin(), userDTO.getPassword(),
+									userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail().toLowerCase(),
+									userDTO.getLangKey());
+							String baseUrl = request.getScheme() + // "http"
+									"://" + // "://"
+									request.getServerName() + // "myhost"
+									":" + // ":"
+									request.getServerPort() + // "80"
+									request.getContextPath(); // "/myContextPath"
+																// or
+																// ""
+																// if
+																// deployed
+																// in
+																// root
+																// context
+
+							// add a default Alias
+
+							try {
+								Alias alias = new Alias();
+								alias.setAlias(userDTO.getLogin());
+								alias.setActive(true);
+								alias.setUser(user);
+
+								aliasRepository.save(alias);
+								aliasSearchRepository.save(alias);
+							} catch (Exception e) {
+								e.printStackTrace();
+								log.error("Alias could not be created " + e.getMessage());
+							}
+
+							mailService.sendActivationEmail(user, baseUrl);
+							String[] sarr = { "message=Account created for " + user.getLogin() };
+							AuditEvent event = new AuditEvent(user.getLogin().toString(), AuditEventPublisher.TYPE_USER,
+									sarr);
+							auditPublisher.publish(event);
+							return new ResponseEntity<>(HttpStatus.CREATED);
+						}));
 	}
 
 	/**
@@ -126,8 +134,11 @@ public class AccountResource {
 	 */
 	@RequestMapping(value = "/activate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Timed
-	public ResponseEntity<String> activateAccount(
-			@RequestParam(value = "key") String key) {
+	public ResponseEntity<String> activateAccount(@RequestParam(value = "key")
+	String key) {
+
+		log.info("");
+
 		return Optional.ofNullable(userService.activateRegistration(key))
 				.map(user -> new ResponseEntity<String>(HttpStatus.OK))
 				.orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
@@ -140,6 +151,7 @@ public class AccountResource {
 	@RequestMapping(value = "/authenticate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Timed
 	public String isAuthenticated(HttpServletRequest request) {
+
 		log.debug("REST request to check if the current user is authenticated");
 		return request.getRemoteUser();
 	}
@@ -149,12 +161,13 @@ public class AccountResource {
 	 */
 	@RequestMapping(value = "/account", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Timed
-	@RolesAllowed({AuthoritiesConstants.ADMIN , AuthoritiesConstants.USER})
+	@RolesAllowed({ AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER })
 	public ResponseEntity<UserDTO> getAccount() {
-		return Optional
-				.ofNullable(userService.getUserWithAuthorities())
-				.map(user -> new ResponseEntity<>(new UserDTO(user),
-						HttpStatus.OK))
+
+		log.info("");
+
+		return Optional.ofNullable(userService.getUserWithAuthorities())
+				.map(user -> new ResponseEntity<>(new UserDTO(user), HttpStatus.OK))
 				.orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 	}
 
@@ -163,30 +176,22 @@ public class AccountResource {
 	 */
 	@RequestMapping(value = "/account", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Timed
-	public ResponseEntity<String> saveAccount(@RequestBody UserDTO userDTO) {
-		Optional<User> existingUser = userRepository.findOneByEmail(userDTO
-				.getEmail());
-		if (existingUser.isPresent()
-				&& (!existingUser.get().getLogin()
-						.equalsIgnoreCase(userDTO.getLogin()))) {
-			return ResponseEntity
-					.badRequest()
-					.headers(
-							HeaderUtil.createFailureAlert("user-management",
-									"emailexists", "Email already in use"))
+	public ResponseEntity<String> saveAccount(@RequestBody
+	UserDTO userDTO) {
+
+		Optional<User> existingUser = userRepository.findOneByEmail(userDTO.getEmail());
+		log.info("");
+
+		if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userDTO.getLogin()))) {
+			return ResponseEntity.badRequest()
+					.headers(HeaderUtil.createFailureAlert("user-management", "emailexists", "Email already in use"))
 					.body(null);
 		}
-		return userRepository
-				.findOneByLogin(SecurityUtils.getCurrentUser().getUsername())
-				.map(u -> {
-					userService.updateUserInformation(userDTO.getFirstName(),
-							userDTO.getLastName(), userDTO.getEmail(),
-							userDTO.getLangKey());
-					return new ResponseEntity<String>(HttpStatus.OK);
-				})
-				.orElseGet(
-						() -> new ResponseEntity<>(
-								HttpStatus.INTERNAL_SERVER_ERROR));
+		return userRepository.findOneByLogin(SecurityUtils.getCurrentUser().getUsername()).map(u -> {
+			userService.updateUserInformation(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
+					userDTO.getLangKey());
+			return new ResponseEntity<String>(HttpStatus.OK);
+		}).orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 	}
 
 	/**
@@ -194,10 +199,13 @@ public class AccountResource {
 	 */
 	@RequestMapping(value = "/account/change_password", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Timed
-	public ResponseEntity<?> changePassword(@RequestBody String password) {
+	public ResponseEntity<?> changePassword(@RequestBody
+	String password) {
+
+		log.info("");
+
 		if (!checkPasswordLength(password)) {
-			return new ResponseEntity<>("Incorrect password",
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Incorrect password", HttpStatus.BAD_REQUEST);
 		}
 		userService.changePassword(password);
 		return new ResponseEntity<>(HttpStatus.OK);
@@ -209,10 +217,11 @@ public class AccountResource {
 	@RequestMapping(value = "/account/sessions", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Timed
 	public ResponseEntity<List<PersistentToken>> getCurrentSessions() {
-		return userRepository
-				.findOneByLogin(SecurityUtils.getCurrentUser().getUsername())
-				.map(user -> new ResponseEntity<>(persistentTokenRepository
-						.findByUser(user), HttpStatus.OK))
+
+		log.info("");
+
+		return userRepository.findOneByLogin(SecurityUtils.getCurrentUser().getUsername())
+				.map(user -> new ResponseEntity<>(persistentTokenRepository.findByUser(user), HttpStatus.OK))
 				.orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 	}
 
@@ -233,63 +242,48 @@ public class AccountResource {
 	 */
 	@RequestMapping(value = "/account/sessions/{series}", method = RequestMethod.DELETE)
 	@Timed
-	public void invalidateSession(@PathVariable String series)
-			throws UnsupportedEncodingException {
+	public void invalidateSession(@PathVariable
+	String series) throws UnsupportedEncodingException {
+
+		log.info("");
+
 		String decodedSeries = URLDecoder.decode(series, "UTF-8");
-		userRepository
-				.findOneByLogin(SecurityUtils.getCurrentUser().getUsername())
-				.ifPresent(
-						u -> {
-							persistentTokenRepository
-									.findByUser(u)
-									.stream()
-									.filter(persistentToken -> StringUtils.equals(
-											persistentToken.getSeries(),
-											decodedSeries))
-									.findAny()
-									.ifPresent(
-											t -> persistentTokenRepository
-													.delete(decodedSeries));
-						});
+		userRepository.findOneByLogin(SecurityUtils.getCurrentUser().getUsername()).ifPresent(u -> {
+			persistentTokenRepository.findByUser(u).stream()
+					.filter(persistentToken -> StringUtils.equals(persistentToken.getSeries(), decodedSeries)).findAny()
+					.ifPresent(t -> persistentTokenRepository.delete(decodedSeries));
+		});
 	}
 
 	@RequestMapping(value = "/account/reset_password/init", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
 	@Timed
-	public ResponseEntity<?> requestPasswordReset(@RequestBody String mail,
-			HttpServletRequest request) {
-		return userService
-				.requestPasswordReset(mail)
-				.map(user -> {
-					String baseUrl = request.getScheme() + "://"
-							+ request.getServerName() + ":"
-							+ request.getServerPort()
-							+ request.getContextPath();
-					mailService.sendPasswordResetMail(user, baseUrl);
-					return new ResponseEntity<>("e-mail was sent",
-							HttpStatus.OK);
-				})
-				.orElse(new ResponseEntity<>("e-mail address not registered",
-						HttpStatus.BAD_REQUEST));
+	public ResponseEntity<?> requestPasswordReset(@RequestBody
+	String mail, HttpServletRequest request) {
+
+		return userService.requestPasswordReset(mail).map(user -> {
+			String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
+					+ request.getContextPath();
+			mailService.sendPasswordResetMail(user, baseUrl);
+			return new ResponseEntity<>("e-mail was sent", HttpStatus.OK);
+		}).orElse(new ResponseEntity<>("e-mail address not registered", HttpStatus.BAD_REQUEST));
 	}
 
 	@RequestMapping(value = "/account/reset_password/finish", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Timed
-	public ResponseEntity<String> finishPasswordReset(
-			@RequestBody KeyAndPasswordDTO keyAndPassword) {
+	public ResponseEntity<String> finishPasswordReset(@RequestBody
+	KeyAndPasswordDTO keyAndPassword) {
+
 		if (!checkPasswordLength(keyAndPassword.getNewPassword())) {
-			return new ResponseEntity<>("Incorrect password",
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>("Incorrect password", HttpStatus.BAD_REQUEST);
 		}
-		return userService
-				.completePasswordReset(keyAndPassword.getNewPassword(),
-						keyAndPassword.getKey())
+		return userService.completePasswordReset(keyAndPassword.getNewPassword(), keyAndPassword.getKey())
 				.map(user -> new ResponseEntity<String>(HttpStatus.OK))
 				.orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 	}
 
 	private boolean checkPasswordLength(String password) {
-		return (!StringUtils.isEmpty(password)
-				&& password.length() >= UserDTO.PASSWORD_MIN_LENGTH && password
-				.length() <= UserDTO.PASSWORD_MAX_LENGTH);
+
+		return (!StringUtils.isEmpty(password) && password.length() >= UserDTO.PASSWORD_MIN_LENGTH
+				&& password.length() <= UserDTO.PASSWORD_MAX_LENGTH);
 	}
 }

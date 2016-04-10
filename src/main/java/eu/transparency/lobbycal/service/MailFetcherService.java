@@ -75,7 +75,7 @@ public class MailFetcherService {
 	public void fetchAllEmail() {
 		
 		ReceiveMailSession session = imapServer.createSession();
-		log.debug(imapServer.getHost() + "  " + imapServer.getAuthenticator());
+		log.trace(imapServer.getHost() + "  " + imapServer.getAuthenticator());
 		try {
 			session.open();
 			session.useFolder(env.getProperty("catchall.mail.folder", "INBOX"));
@@ -86,12 +86,12 @@ public class MailFetcherService {
 
 		ReceivedEmail[] emails = session.receiveEmailAndMarkSeen(EmailFilter
 				.filter().flag(Flags.Flag.SEEN, false));
-		log.debug("Mails to process " + session.getUnreadMessageCount());
+		log.trace("Mails to process " + session.getUnreadMessageCount());
 
 		try {
 			if (emails == null) {
 				session.close();
-				log.info("");
+				log.trace("");
 				return;
 			}
 			for (ReceivedEmail calEmail : emails) {

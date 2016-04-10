@@ -17,6 +17,10 @@ public interface AliasRepository extends JpaRepository<Alias, Long> {
 	@Query("select alias from Alias alias where alias.user.login = ?#{principal.username}")
 	List<Alias> findAllForCurrentUser();
 
+	// @Query("select alias from Alias alias where alias.user.login =:login")
+	// @Param ("login")
+	List<Alias> findAllByUserLogin(String login);
+
 	@Query("select alias from Alias alias where alias.user.login = ?#{principal.username}")
 	Page<Alias> findAllForCurrentUser(Pageable pageable);
 

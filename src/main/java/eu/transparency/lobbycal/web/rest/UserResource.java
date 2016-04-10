@@ -96,7 +96,7 @@ public class UserResource {
     @Timed
     @Secured(AuthoritiesConstants.ADMIN)
     public ResponseEntity<?> createUser(@RequestBody ManagedUserDTO managedUserDTO, HttpServletRequest request) throws URISyntaxException {
-        log.debug("REST request to save User : {}", managedUserDTO);
+        log.info("REST request to save User : {}", managedUserDTO);
         if (userRepository.findOneByLogin(managedUserDTO.getLogin()).isPresent()) {
             return ResponseEntity.badRequest()
                 .headers(HeaderUtil.createFailureAlert("user-management", "userexists", "Login already in use"))
@@ -113,7 +113,8 @@ public class UserResource {
             ":" +                                  // ":"
             request.getServerPort() +              // "80"
             request.getContextPath();              // "/myContextPath" or "" if deployed in root context
-            mailService.sendCreationEmail(newUser, baseUrl);
+            log.info("");
+            mailService.sendActivationEmail(newUser, baseUrl);
             return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
                 .headers(HeaderUtil.createAlert( "user-management.created", newUser.getLogin()))
                 .body(newUser);
@@ -168,7 +169,14 @@ public class UserResource {
     @Transactional(readOnly = true)
     public ResponseEntity<List<ManagedUserDTO>> getAllUsers(Pageable pageable)
         throws URISyntaxException {
-        Page<User> page = userRepository.findAll(pageable);
+		log.info(""+pageable.getSort());
+
+		log.info(""+pageable.getOffset());
+
+		log.info(""+pageable.getPageNumber());
+
+		log.info("" + pageable.getPageSize());
+		Page<User> page = userRepository.findAllByOrderByLastNameAscLoginAsc(pageable);
         List<ManagedUserDTO> managedUserDTOs = page.getContent().stream()
             .map(user -> new ManagedUserDTO(user))
             .collect(Collectors.toList());

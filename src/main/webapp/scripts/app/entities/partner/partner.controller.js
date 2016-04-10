@@ -57,7 +57,8 @@ angular.module('lobbycalApp')
 
         $scope.search = function () {
             PartnerSearch.query({query: $scope.searchQuery}, function(result) {
-                $scope.partners = result;
+                $scope.partners = result;    
+                $scope.totalItems =-1;
             }, function(response) {
                 if(response.status === 404) {
                     $scope.loadAll();

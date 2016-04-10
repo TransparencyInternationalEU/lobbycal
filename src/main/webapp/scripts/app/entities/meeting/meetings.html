@@ -1,12 +1,19 @@
-<h2 translate="lobbycalApp.meeting.home.title">Meetings</h2>
+<h2 title="Total: {{totalItems}}">
+	<span translate="lobbycalApp.meeting.home.title">Meetings</span>
+</h2>
+<div>
+	
+	<br />
 
+</div>
+
+</div>
 <jh-alert></jh-alert>
-<div class="container">
+<div has-authority="ROLE_USER" class="container">
 	<div class="row">
 		<div class="col-md-2">
-			<button has-authority="ROLE_USER" class="btn btn-primary"
-				data-toggle="modal" data-target="#saveMeetingModal"
-				ng-click="clear()">
+			<button class="btn btn-primary" data-toggle="modal"
+				data-target="#saveMeetingModal" ng-click="clear()">
 				<span class="glyphicon glyphicon-flash"></span> <span
 					translate="lobbycalApp.meeting.home.createLabel">Create a
 					new Meeting</span>
@@ -50,43 +57,54 @@
 							ng-model="meeting.title">
 
 					</div>
-					<div class="form-group">
+					<!-- <div class="form-group">
+						<span ng-if="!meeting.userId"></span>
+						<span ng-if="meeting.userId">
 						<label translate="lobbycalApp.meeting.submitter">Submitter</label>
 						<input type="text" class="form-control" name="submitter"
 							ng-model="meeting.submitter">
+							</span>
 
 					</div>
 					<div class="form-group">
-						<label translate="lobbycalApp.meeting.aliasUsed">Alias</label> <input
+						
+						<span ng-if="!meeting.userId"></span>
+						<span ng-if="meeting.userId">
+						<label translate="lobbycalApp.meeting.aliasUsed">Alias</label> 
+						<input
 							type="text" class="form-control" name="aliasUsed"
-							ng-model="meeting.aliasUsed">
-
+							ng-model="meeting.aliasUsed"></span>
 					</div>
+						-->
 					<div class="form-group">
-						<label translate="lobbycalApp.meeting.startDate">Start </label> <input
+						<label translate="lobbycalApp.meeting.startDate.header">Start
+						</label> <sub translate="lobbycalApp.meeting.startDate.hint"> </sub> <input
 							type="datetime-local" class="form-control" name="startDate"
-							ng-model="meeting.startDate" ng-model-options="{timezone: 'UTC'}">
+							ng-model="meeting.startDate" placeholder="yyyy-MM-ddTHH:mm:ss"
+							ng-model-options="{timezone: 'UTC'}">
 					</div>
 					<div class="form-group">
-						<label translate="lobbycalApp.meeting.endDate">End </label> <input
-							type="datetime-local" class="form-control" name="endDate"
-							ng-model="meeting.endDate" ng-model-options="{timezone: 'BST'}">
+						<label translate="lobbycalApp.meeting.endDate.header">End
+						</label> <sub translate="lobbycalApp.meeting.endDate.hint"></sub> <input
+							type="datetime-local" placeholder="yyyy-MM-ddTHH:mm:ss"
+							class="form-control" name="endDate" ng-model="meeting.endDate"
+							ng-model-options="{timezone: 'BST'}">
 					</div>
 					<!--  <div class="form-group">
                             <label translate="lobbycalApp.meeting.uid">Uid</label>
-                            <input type="text" class="form-control" name="uid"
+                            <input type="hidden" class="form-control" name="uid"
                                    ng-model="meeting.uid">
-                    </div> -->
+                     </div> -->
 					<div class="form-group">
 						<label translate="lobbycalApp.meeting.mTag"><span
-							class="glyphicon glyphicon-tags">mTag</span></label>*<input typ="text"
+							class="glyphicon glyphicon-tags">mTag</span></label>*<input type="text"
 							class="form-control" name="mTag" ng-model="meeting.mTag">
 						</input>
 					</div>
 					<div class="form-group">
 						<label translate="lobbycalApp.meeting.mPartner"><span
 							class="glyphicon glyphicon-tags">mPartner</span> </label>*<input
-							class="form-control" typ="text" name="mPartner"
+							class="form-control" type="text" name="mPartner"
 							ng-model="meeting.mPartner"> </input>
 					</div>
 					<div class="form-group">
@@ -107,10 +125,16 @@
 						</select>
 					</div>
 					<div class="form-group">
-						<label translate="lobbycalApp.meeting.user">user</label> <select
+						<label translate="lobbycalApp.meeting.user">user</label>
+						<!--  <select
 							class="form-control" name="user" ng-model="meeting.userId"
 							ng-options="user.id as user.login for user in users">
-						</select>
+						</select>-->
+						<span ng-if="!meeting.userId"> <input class="form-control"
+							type="text" disabled="disabled" value="{{curUser}}" name="uid" ng-model="curUser"/>
+						</span> <span ng-if="meeting.userId"> <input class="form-control"
+							type="text" disabled="disabled" value="{{meeting.userId}}"
+							name="uid" ng-model="meeting.userId"/></span>
 					</div>
 				</div>
 				<div class="modal-footer">
@@ -162,43 +186,43 @@
 	</div>
 </div>
 
-<div class="table-responsive">
+<div class="table-responsive" has-authority="ROLE_USER">
 	<table class="table table-striped">
 		<thead>
-			<tr >
+			<tr>
 				<!-- <th>ID</th> -->
 				<th><span translate="lobbycalApp.meeting.user">MEP</span></th>
 				<th translate="lobbycalApp.meeting.title">Title</th>
-				<th translate="lobbycalApp.meeting.mTag">Tags</th>
-				<th translate="lobbycalApp.meeting.startDate">StartDate</th>
-				<!--<th translate="lobbycalApp.meeting.endDate">EndDate</th> -->
-				<th translate="lobbycalApp.meeting.mPartner">Partner</th>
+				<!-- <th translate="lobbycalApp.meeting.mTag">Tags</th> -->
+				<th translate="lobbycalApp.meeting.startDate.header">StartDate</th>
+				<th translate="lobbycalApp.meeting.endDate.header">EndDate</th>
+				<!-- <th translate="lobbycalApp.meeting.mPartner">Partner</th>  -->
 				<!-- <th translate="lobbycalApp.meeting.uid">Uid</th> -->
 				<!--<th translate="lobbycalApp.meeting.partner">Partner</th>-->
 				<th></th>
 			</tr>
 		</thead>
-		<tbody >
-			<tr	ng-repeat="meeting in meetings">
+		<tbody>
+			<tr ng-repeat="meeting in meetings">
 				<!-- <td><a ui-sref="meetingDetail({id:meeting.id})">{{meeting.id}}</a></td> -->
 
-				<td>{{meeting.userFirstName}} {{meeting.userLastName}}</td>
+				<td>{{meeting.userFirstName}} {{meeting.userLastName}} <!-- <div>{{meeting}}</div> --></td>
 				<td><a title="{{meeting.title}}"
 					ui-sref="meetingDetail({id:meeting.id})"> {{meeting.title |
 						limitTo: 25 }}{{meeting.title > 25 ? '...' : ''}} </a></td>
-				<td ng-if="meeting.mTag">{{meeting.mTag}}</td>
-				<td ng-if="!meeting.mTag"><span ng-repeat="tag in meeting.tags">{{tag.i18nKey}}&nbsp;</span></td>
+				<!-- <td ng-if="meeting.mTag">{{meeting.mTag}} </td>
+				<td ng-if="!meeting.mTag"><span ng-repeat="tag in meeting.tags"><a sref="/#/tag/{{tag.id}}">{{tag.i18nKey}}&nbsp;</a></span></td> -->
 				<td>{{meeting.startDate | date:'dd/MM/yyyy HH:mm'}}</td>
-				<!-- <td>{{meeting.endDate | date:'dd/MM/yyyy HH:mm'}}</td>-->
+				<td>{{meeting.endDate | date:'dd/MM/yyyy HH:mm'}}</td>
 				<!-- <td>{{meeting.uid}}</td> -->
-				<td ng-if="meeting.mPartner">{{meeting.mPartner}}</td>
+				<!-- <td ng-if="meeting.mPartner">{{meeting.mPartner}}</td>
 				<td ng-if="!meeting.mPartner"><span
 					ng-repeat="p in meeting.partners"> <a
 						ng-if="p.transparencyRegisterID"
 						href="http://ec.europa.eu/transparencyregister/public/consultation/displaylobbyist.do?id={{p.transparencyRegisterID}}">{{p.name}}</a>
-						<!--  title="From E-Mail: '{{p.name}}'"--> <span
+						 title="From E-Mail: '{{p.name}}'" <span
 						ng-if="!p.transparencyRegisterID"> {{p.name}}</span>
-				</span></td>
+				</span></td> -->
 				<td align="right" width="27%" has-authority="ROLE_USER">
 					<button type="submit" ui-sref="meetingDetail({id:meeting.id})"
 						class="btn btn-info btn-sm">

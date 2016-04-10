@@ -31,7 +31,7 @@ public class ManagedUserDTO extends UserDTO {
 		this.createdDate = user.getCreatedDate();
 		this.lastModifiedBy = user.getLastModifiedBy();
 		this.lastModifiedDate = user.getLastModifiedDate();
-		log.info("");
+		log.trace("");
 	}
 
 	public Long getId() {

@@ -106,7 +106,14 @@ In method `doFilterInternal(HttpServletRequest request, HttpServletResponse resp
 `response.setHeader("Access-Control-Max-Age", "86400"); // 24 Hours`
 `response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth-token");`
 
+# Deactivation  & Deletion policy
 
+If a user is deactivated, emails related to the user account or one of his submitters are no longer processed. 
+Related meetings are still displayed.
+
+Is a user gets deleted, his aliases, meetings and submitters will also get deleted. 
+
+ 
 
 
 ## DEVELOPPER NOTES

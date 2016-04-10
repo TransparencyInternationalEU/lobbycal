@@ -41,7 +41,7 @@ public class SwaggerConfiguration {
 	 * Swagger Springfox configuration.
 	 */
 	@Bean
-	@Profile({ "!" + Constants.SPRING_PROFILE_FAST })
+	@Profile({ "!" + Constants.SPRING_PROFILE_DEVELOPMENT })
 	public Docket swaggerSpringfoxDocket(JHipsterProperties jHipsterProperties) {
 		log.debug("Starting Swagger");
 		StopWatch watch = new StopWatch();

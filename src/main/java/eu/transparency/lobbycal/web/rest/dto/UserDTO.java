@@ -26,7 +26,6 @@ public class UserDTO {
 	private String login;
 
 
-	@Size(min = 2, max = 5)
 	private Long id;
 	
 	public Long getId() {
@@ -82,7 +81,7 @@ public class UserDTO {
 		this.langKey = langKey;
 		this.authorities = authorities;
 		this.id=id;
-		log.debug(""+this.id);
+		log.trace(""+this.id);
 		
 	}
 

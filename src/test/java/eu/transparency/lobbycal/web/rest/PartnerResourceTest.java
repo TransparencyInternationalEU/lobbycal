@@ -1,18 +1,26 @@
 package eu.transparency.lobbycal.web.rest;
 
-import eu.transparency.lobbycal.Application;
-import eu.transparency.lobbycal.domain.Partner;
-import eu.transparency.lobbycal.repository.PartnerRepository;
-import eu.transparency.lobbycal.repository.search.PartnerSearchRepository;
-import eu.transparency.lobbycal.web.rest.PartnerResource;
-import eu.transparency.lobbycal.web.rest.mapper.PartnerMapper;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.StrictAssertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.hamcrest.Matchers.hasItem;
-
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -24,20 +32,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import org.joda.time.LocalDate;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import eu.transparency.lobbycal.Application;
+import eu.transparency.lobbycal.domain.Partner;
+import eu.transparency.lobbycal.repository.PartnerRepository;
+import eu.transparency.lobbycal.web.rest.mapper.PartnerMapper;
 
 /**
  * Test class for the PartnerResource REST controller.
@@ -63,8 +61,6 @@ public class PartnerResourceTest {
     @Inject
     private PartnerMapper partnerMapper;
 
-    @Inject
-    private PartnerSearchRepository partnerSearchRepository;
 
     private MockMvc restPartnerMockMvc;
 
@@ -76,7 +72,6 @@ public class PartnerResourceTest {
         PartnerResource partnerResource = new PartnerResource();
         ReflectionTestUtils.setField(partnerResource, "partnerRepository", partnerRepository);
         ReflectionTestUtils.setField(partnerResource, "partnerMapper", partnerMapper);
-        ReflectionTestUtils.setField(partnerResource, "partnerSearchRepository", partnerSearchRepository);
         this.restPartnerMockMvc = MockMvcBuilders.standaloneSetup(partnerResource).build();
     }
 

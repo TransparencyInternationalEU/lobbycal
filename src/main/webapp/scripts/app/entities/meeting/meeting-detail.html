@@ -19,7 +19,7 @@
 					<td><input type="text" class="input-sm form-control"
 						value="{{meeting.title}}" readonly></td>
 				</tr>
-				<tr has-authority="ROLE_ADMIN">
+				<!-- <tr has-authority="ROLE_ADMIN">
 					<td><i class="fa fa-envelope" /><span
 						translate="lobbycalApp.meeting.submitter" /></td>
 					<td><input type="text" class="input-sm form-control"
@@ -30,28 +30,28 @@
 						translate="lobbycalApp.meeting.aliasUsed" /></td>
 					<td><input type="text" class="input-sm form-control"
 						value="{{meeting.aliasUsed}}" readonly></td>
-				</tr>
+				</tr> -->
 				<tr>
-					<td><i class="fa fa-calendar-o " /><span
-						translate="lobbycalApp.meeting.startDate" /></td>
+					<td><i class="fa fa-calendar-o " /> <span
+						translate="lobbycalApp.meeting.startDate.header" /></td>
 					<td><input type="text" class="input-sm form-control"
 						value="{{meeting.startDate | date:'dd/MM/yyyy HH:mm' }}" readonly></td>
 				</tr>
 				<tr>
 					<td><i class="fa fa-calendar-o " /> <span
-						translate="lobbycalApp.meeting.endDate" /></td>
+						translate="lobbycalApp.meeting.endDate.header" /></td>
 					<td><input type="text" class="input-sm form-control"
 						value="{{meeting.endDate | date:'dd/MM/yyyy HH:mm'}}" readonly></td>
 				</tr>
-				<!-- <tr>
-					<td><span translate="lobbycalApp.meeting.uid">Uid</span></td>
+				<tr  has-authority="ROLE_ADMIN">
+					<td><i class="fa fa-calendar-o " /> <span translate="lobbycalApp.meeting.uid">Uid</span></td>
 					<td><input type="text" class="input-sm form-control"
 						value="{{meeting.uid}}" readonly></td>
-				</tr> -->
+				</tr> 
 				<tr has-authority="ROLE_ADMIN">
-					<td><i class=" glyphicon glyphicon-user"></i></td>
+					<td><i class=" glyphicon glyphicon-user"></i> MEP</td>
 					<td><input type="text" class="input-sm form-control"
-						value="{{meeting.userLogin}}" readonly></td>
+						value="{{meeting.userFirstName}}&nbsp;{{meeting.userLastName}}" readonly></td>
 				</tr>
 				<tr>
 					<td><i class="glyphicon glyphicon-tags"></i><span
@@ -83,8 +83,8 @@
 						value="{{meeting.mPartner}}" readonly /></td>
 				</tr>
 				<tr>
-					<td><i class="fa fa-users "><span
-							translate="lobbycalApp.meeting.partner"></span></i></td>
+					<td><i class="fa fa-users "></i><span
+							translate="lobbycalApp.meeting.partner"></span></td>
 					<td>
 						<div class="row" ng-repeat="partner in meeting.partners">
 							<div class="col-md-6">

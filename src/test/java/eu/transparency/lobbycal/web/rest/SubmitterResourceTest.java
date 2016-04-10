@@ -1,17 +1,24 @@
 package eu.transparency.lobbycal.web.rest;
 
-import eu.transparency.lobbycal.Application;
-import eu.transparency.lobbycal.domain.Submitter;
-import eu.transparency.lobbycal.repository.SubmitterRepository;
-import eu.transparency.lobbycal.repository.search.SubmitterSearchRepository;
-import eu.transparency.lobbycal.web.rest.SubmitterResource;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.StrictAssertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static org.hamcrest.Matchers.hasItem;
-
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.IntegrationTest;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -23,14 +30,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import eu.transparency.lobbycal.Application;
+import eu.transparency.lobbycal.domain.Submitter;
+import eu.transparency.lobbycal.repository.SubmitterRepository;
 
 /**
  * Test class for the SubmitterResource REST controller.
@@ -55,8 +57,6 @@ public class SubmitterResourceTest {
 	@Inject
 	private SubmitterRepository submitterRepository;
 
-	@Inject
-	private SubmitterSearchRepository submitterSearchRepository;
 
 	private MockMvc restSubmitterMockMvc;
 
@@ -68,8 +68,6 @@ public class SubmitterResourceTest {
 		SubmitterResource submitterResource = new SubmitterResource();
 		ReflectionTestUtils.setField(submitterResource, "submitterRepository",
 				submitterRepository);
-		ReflectionTestUtils.setField(submitterResource,
-				"submitterSearchRepository", submitterSearchRepository);
 		this.restSubmitterMockMvc = MockMvcBuilders.standaloneSetup(
 				submitterResource).build();
 	}

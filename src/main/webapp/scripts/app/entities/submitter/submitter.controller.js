@@ -58,6 +58,7 @@ angular.module('lobbycalApp')
         $scope.search = function () {
             SubmitterSearch.query({query: $scope.searchQuery}, function(result) {
                 $scope.submitters = result;
+           	 	$scope.totalItems =-1;
             }, function(response) {
                 if(response.status === 404) {
                     $scope.loadAll();
