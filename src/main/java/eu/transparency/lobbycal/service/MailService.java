@@ -2,7 +2,6 @@ package eu.transparency.lobbycal.service;
 
 import java.util.Locale;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.mail.internet.MimeMessage;
 
@@ -10,7 +9,6 @@ import org.apache.commons.lang.CharEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
-import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -84,17 +82,7 @@ public class MailService {
         sendEmail(user.getEmail(), subject, content, false, true);
     }
 
-    @Async
-    public void sendCreationEmail(User user, String baseUrl) {
-        log.debug("Sending creation e-mail to '{}'", user.getEmail());
-        Locale locale = Locale.forLanguageTag(user.getLangKey());
-        Context context = new Context(locale);
-        context.setVariable("user", user);
-        context.setVariable("baseUrl", baseUrl);
-        String content = templateEngine.process("creationEmail", context);
-        String subject = messageSource.getMessage("email.activation.title", null, locale);
-        sendEmail(user.getEmail(), subject, content, false, true);
-    }
+  
 
     @Async
     public void sendPasswordResetMail(User user, String baseUrl) {

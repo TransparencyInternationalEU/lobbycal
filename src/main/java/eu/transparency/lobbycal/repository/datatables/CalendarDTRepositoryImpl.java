@@ -23,6 +23,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import eu.transparency.lobbycal.web.rest.MeetingSpecifications;
 
@@ -42,44 +43,48 @@ public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends Simple
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public DataTablesOutput<T> findAll(DataTablesInput input) {
+
 		log.info("");
 		return findAll(input, null);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public DataTablesOutput<T> findAll(DataTablesInput input, Specification<T> additionalSpecification) {
+
 		DataTablesOutput<T> output = new DataTablesOutput<T>();
 		output.setDraw(input.getDraw());
 
-		log.info("" + additionalSpecification.toString());
 		try {
 			output.setRecordsTotal(count());
 
-			log.info("");
 			Page<T> data = findAll(Specifications.where(new DataTablesSpecification<T>(input))
 					.and(additionalSpecification).and((Specification<T>) MeetingSpecifications.past())
+
 					.or((Specification<T>) MeetingSpecifications.hasPartner(input.getSearch().getValue().toLowerCase(),
 							null))
 					.and(additionalSpecification).and((Specification<T>) MeetingSpecifications.past())
+
 					.or((Specification<T>) MeetingSpecifications.hasTag(input.getSearch().getValue().toLowerCase(),
 							null))
-					.and(additionalSpecification)
-					.and((Specification<T>) MeetingSpecifications.past()
-							), getPageable(input));
+					.and(additionalSpecification).and((Specification<T>) MeetingSpecifications.past())
 
-			log.info("");
+					.or((Specification<T>) MeetingSpecifications.hasUserName(input.getSearch().getValue().toLowerCase(),
+							null))
+					.and(additionalSpecification).and((Specification<T>) MeetingSpecifications.past())
+
+			, getPageable(input));
+
 			output.setData(data.getContent());
-			log.info("");
 			output.setRecordsFiltered(data.getTotalElements());
-			log.info("");
 
 		} catch (Exception e) {
 			output.setError(e.toString());
 			output.setRecordsFiltered(0L);
 		}
 
-		log.info("");
 		return output;
 	}
 
@@ -92,25 +97,23 @@ public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends Simple
 	 * @return a {@link Pageable}, must not be {@literal null}.
 	 */
 	private Pageable getPageable(DataTablesInput input) {
+
 		List<Order> orders = new ArrayList<Order>();
-		log.info("");
 		for (OrderParameter order : input.getOrder()) {
+			log.debug("order column: " + order.getColumn() + "");
 			ColumnParameter column = input.getColumns().get(order.getColumn());
 			if (column.getOrderable()) {
 				String sortColumn = column.getData();
 				Direction sortDirection = Direction.fromString(order.getDir());
 				orders.add(new Order(sortDirection, sortColumn));
 			}
-			log.info("");
 		}
 		Sort sort = orders.isEmpty() ? null : new Sort(orders);
-
-		log.info("");
 		if (input.getLength() == -1) {
 			input.setStart(0);
 			input.setLength(Integer.MAX_VALUE);
 		}
-		log.info("");
+		
 		return new PageRequest(input.getStart() / input.getLength(), input.getLength(), sort);
 	}
 }

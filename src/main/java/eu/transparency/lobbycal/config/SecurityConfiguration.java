@@ -79,6 +79,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     
     protected void configure(HttpSecurity http) throws Exception {
+    	//@formatter:off
         http
             .csrf()
             .ignoringAntMatchers("/websocket/**")
@@ -111,6 +112,31 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .disable()
         .and()
             .authorizeRequests()
+            .antMatchers(HttpMethod.GET,"/api/**").permitAll()
+
+            .antMatchers(HttpMethod.PUT, "/api/meetings/**").hasAuthority(AuthoritiesConstants.USER)
+            .antMatchers(HttpMethod.POST, "/api/meetings/**").hasAuthority(AuthoritiesConstants.USER)
+            .antMatchers(HttpMethod.DELETE,"/api/meetings/**").hasAuthority(AuthoritiesConstants.USER)
+            
+
+            .antMatchers(HttpMethod.PUT, "/api/tags/**").hasAuthority(AuthoritiesConstants.USER)
+            .antMatchers(HttpMethod.POST, "/api/tags/**").hasAuthority(AuthoritiesConstants.USER)
+            .antMatchers(HttpMethod.DELETE,"/api/tags/**").hasAuthority(AuthoritiesConstants.ADMIN)
+            
+
+            .antMatchers(HttpMethod.PUT, "/api/partners/**").hasAuthority(AuthoritiesConstants.USER)
+            .antMatchers(HttpMethod.POST, "/api/partners/**").hasAuthority(AuthoritiesConstants.USER)
+            .antMatchers(HttpMethod.DELETE,"/api/partners/**").hasAuthority(AuthoritiesConstants.USER)
+            
+
+            .antMatchers(HttpMethod.PUT, "/api/submitters/**").hasAuthority(AuthoritiesConstants.USER)
+            .antMatchers(HttpMethod.POST, "/api/submitters/**").hasAuthority(AuthoritiesConstants.USER)
+            .antMatchers(HttpMethod.DELETE,"/api/submitters/**").hasAuthority(AuthoritiesConstants.USER)
+
+            .antMatchers(HttpMethod.PUT, "/api/aliass/**").hasAuthority(AuthoritiesConstants.USER)
+            .antMatchers(HttpMethod.POST, "/api/aliass/**").hasAuthority(AuthoritiesConstants.USER)
+            .antMatchers(HttpMethod.DELETE,"/api/aliass/**").hasAuthority(AuthoritiesConstants.USER)
+
             .antMatchers("/api/register").permitAll()
             .antMatchers("/api/activate").permitAll()
             .antMatchers("/api/authenticate").permitAll()
@@ -119,13 +145,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/elasticsearch/**").hasAuthority(AuthoritiesConstants.ADMIN)
             .antMatchers("/api/logs/**").hasAuthority(AuthoritiesConstants.ADMIN)
             .antMatchers("/api/audits/**").hasAuthority(AuthoritiesConstants.ADMIN)
+            .antMatchers(HttpMethod.DELETE,"/api/users**").hasAuthority(AuthoritiesConstants.ADMIN)
             .antMatchers(HttpMethod.GET,"/api/_search/meetings/**").permitAll()
             .antMatchers("/api/_search/users**").hasAuthority(AuthoritiesConstants.ADMIN)
             .antMatchers("/api/_search/aliass**").hasAuthority(AuthoritiesConstants.ADMIN)
             .antMatchers("/api/_search/submitters**").hasAuthority(AuthoritiesConstants.ADMIN)
-            .antMatchers(HttpMethod.GET, "/api/meetings/**").permitAll()
-            .antMatchers(HttpMethod.POST, "/api/meetings/**").permitAll()
-            .antMatchers(HttpMethod.DELETE,"/api/meetings/**").hasAuthority(AuthoritiesConstants.USER)
             .antMatchers("/api/**").authenticated()
             .antMatchers("/metrics/**").hasAuthority(AuthoritiesConstants.ADMIN)
             .antMatchers("/health/**").hasAuthority(AuthoritiesConstants.ADMIN)
@@ -146,7 +170,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/api-docs/**").hasAuthority(AuthoritiesConstants.ADMIN)
             .antMatchers("/v2/api-docs/**").hasAuthority(AuthoritiesConstants.ADMIN)
             .antMatchers("/protected/**").authenticated();
-
+        	//@formatter:off
     }
 
     @Bean

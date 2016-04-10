@@ -1,0 +1,25 @@
+{
+    "about": {
+        "title": "About ",
+        "what": {
+        	"header":"What?",
+            "message": "" 
+        },
+        "why": {
+        	"header":"Why?",
+            "message": " " 
+        },
+        "who": {
+        	"header":"Who?",
+            "message":"" 
+        },
+        "how": {
+        	"header":"How?",
+            "message": ""
+        },
+        "wanttoo": {
+        	"header":"I want to use it too! ",
+            "message": "If you need help with the installation on your server, contact Transparency International EU. Their guide for how to install it can be found here: <a href=\"http://www.transparencyinternational.eu/2016/02/how-to-install-lobbycal/\">http://www.transparencyinternational.eu/2016/02/how-to-install-lobbycal/</a> If you are a developer, the code for lobbycal can be downloaded and installed from <a href=\"https://github.com/TransparencyInternationalEU/lobbycal\">GitHub</a>. You are very welcome to further contribute to the code!" 
+        }
+    }
+}

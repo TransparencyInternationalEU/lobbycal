@@ -22,7 +22,7 @@ angular.module('lobbycalApp')
         $scope.previousMonth = function () {
             var fromDate = new Date();
             if (fromDate.getMonth() === 0) {
-                fromDate = new Date(fromDate.getFullYear() - 1, 0, fromDate.getDate());
+                fromDate = new Date(fromDate.getFullYear(), fromDate.getMonth() , fromDate.getDate() -7);
             } else {
                 fromDate = new Date(fromDate.getFullYear(), fromDate.getMonth() - 1, fromDate.getDate());
             }

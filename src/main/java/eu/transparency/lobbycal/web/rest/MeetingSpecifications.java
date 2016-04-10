@@ -21,23 +21,21 @@ import eu.transparency.lobbycal.domain.Meeting;
 import eu.transparency.lobbycal.domain.Meeting_;
 import eu.transparency.lobbycal.domain.Partner;
 import eu.transparency.lobbycal.domain.Tag;
+import eu.transparency.lobbycal.domain.User;
 
 public final class MeetingSpecifications {
-	private static final Logger log = LoggerFactory
-			.getLogger(MeetingSpecifications.class);
+	private static final Logger log = LoggerFactory.getLogger(MeetingSpecifications.class);
 
 	MeetingSpecifications() {
 	}
 
-	public static Specification<Meeting> hasTag(String searchTerm,
-			Collection<Long> mepIds) {
+	public static Specification<Meeting> hasPartner(String searchTerm, Collection<Long> mepIds) {
 		return new Specification<Meeting>() {
 			@Override
-			public Predicate toPredicate(Root<Meeting> root,
-					CriteriaQuery<?> query, CriteriaBuilder cb) {
+			public Predicate toPredicate(Root<Meeting> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				query.distinct(true);
 				String containsLikePattern = getContainsLikePattern(searchTerm);
-				log.info(searchTerm + "," + mepIds);
+				log.trace(searchTerm + "," + mepIds);
 				Root<Meeting> meeting = root;
 				Subquery<Partner> partnerSubQuery = query.subquery(Partner.class);
 				Root<Partner> partner = partnerSubQuery.from(Partner.class);
@@ -51,36 +49,20 @@ public final class MeetingSpecifications {
 		};
 
 	}
-	public static Specification<Meeting> past() {
+
+	public static Specification<Meeting> hasTag(String searchTerm, Collection<Long> mepIds) {
 		return new Specification<Meeting>() {
 			@Override
-			public Predicate toPredicate(Root<Meeting> root,
-					CriteriaQuery<?> query, CriteriaBuilder cb) {
-				query.distinct(true);
-				return cb.lessThanOrEqualTo(root.<ZonedDateTime>get("startDate"),  ZonedDateTime.now());
-			}
-
-		};
-
-	}
-	
-	
-	public static Specification<Meeting> hasPartner(String searchTerm,
-			Collection<Long> mepIds) {
-		return new Specification<Meeting>() {
-			@Override
-			public Predicate toPredicate(Root<Meeting> root,
-					CriteriaQuery<?> query, CriteriaBuilder cb) {
+			public Predicate toPredicate(Root<Meeting> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				query.distinct(true);
 				String containsLikePattern = getContainsLikePattern(searchTerm);
-				log.info(searchTerm + "," + mepIds);
+				log.trace(searchTerm + "," + mepIds);
 				Root<Meeting> meeting = root;
 				Subquery<Tag> tagSubQuery = query.subquery(Tag.class);
 				Root<Tag> tag = tagSubQuery.from(Tag.class);
 				Expression<Collection<Meeting>> tagMeetings = tag.get("meetings");
 				tagSubQuery.select(tag);
-				tagSubQuery.where(cb.like(tag.get("i18nKey"), containsLikePattern),
-						cb.isMember(meeting, tagMeetings));
+				tagSubQuery.where(cb.like(tag.get("i18nKey"), containsLikePattern), cb.isMember(meeting, tagMeetings));
 				return cb.exists(tagSubQuery);
 			}
 
@@ -88,28 +70,43 @@ public final class MeetingSpecifications {
 
 	}
 
-	public  static Specification<Meeting> hasTerm(String searchTerm,
-			Collection<Long> mepIds) {
+	public static Specification<Meeting> hasUserName(String searchTerm, Collection<Long> mepIds) {
 		return new Specification<Meeting>() {
 			@Override
-			public Predicate toPredicate(Root<Meeting> root,
-					CriteriaQuery<?> query, CriteriaBuilder cb) {
+			public Predicate toPredicate(Root<Meeting> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				query.distinct(true);
 				String containsLikePattern = getContainsLikePattern(searchTerm);
-				log.info(searchTerm + "," + mepIds);
+				log.trace(searchTerm + "," + mepIds);
+				Root<Meeting> meeting = root;
+				Subquery<User> userSubQuery = query.subquery(User.class);
+				Root<User> user = userSubQuery.from(User.class);
+				Expression<Collection<Meeting>> userMeetings = user.get("meetings");
+				userSubQuery.select(user);
+				userSubQuery.where(
+						cb.or(cb.like(user.get("firstName"), containsLikePattern),
+								cb.like(user.get("lastName"), containsLikePattern)),
+						cb.isMember(meeting, userMeetings));
+				return cb.exists(userSubQuery);
+			}
+		};
+	}
+
+	public static Specification<Meeting> hasTerm(String searchTerm, Collection<Long> mepIds) {
+		return new Specification<Meeting>() {
+			@Override
+			public Predicate toPredicate(Root<Meeting> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				query.distinct(true);
+				String containsLikePattern = getContainsLikePattern(searchTerm);
+				log.trace(searchTerm + "," + mepIds);
 				List<Predicate> mustPreds = new ArrayList<>();
-				mustPreds.add(root.join(Meeting_.user, JoinType.LEFT)
-						.in(mepIds));
+				mustPreds.add(root.join(Meeting_.user, JoinType.LEFT).in(mepIds));
 
 				try {
 					// can criteria
 					// @see CalendarDTRepositoryImpl
-					cb.or(cb.like(cb.lower(root.<String> get("title")),
-							containsLikePattern), cb.like(
-							cb.lower(root.<String> get("mTag")),
-							containsLikePattern), cb.like(
-							cb.lower(root.<String> get("mPartner")),
-							containsLikePattern));
+					cb.or(cb.like(cb.lower(root.<String> get("title")), containsLikePattern),
+							cb.like(cb.lower(root.<String> get("mTag")), containsLikePattern),
+							cb.like(cb.lower(root.<String> get("mPartner")), containsLikePattern));
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -121,16 +118,25 @@ public final class MeetingSpecifications {
 		};
 
 	}
-	
 
+	public static Specification<Meeting> past() {
+		return new Specification<Meeting>() {
+			@Override
+			public Predicate toPredicate(Root<Meeting> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				query.distinct(true);
+				return cb.lessThanOrEqualTo(root.<ZonedDateTime> get("startDate"), ZonedDateTime.now());
+			}
 
-	private static Predicate andTogether(List<Predicate> predicates,
-			CriteriaBuilder cb) {
+		};
+
+	}
+
+	private static Predicate andTogether(List<Predicate> predicates, CriteriaBuilder cb) {
 		return cb.and(predicates.toArray(new Predicate[0]));
 	}
 
-	private static Predicate orTogether(List<Predicate> predicates,
-			CriteriaBuilder cb) {
+	@SuppressWarnings("unused")
+	private static Predicate orTogether(List<Predicate> predicates, CriteriaBuilder cb) {
 		return cb.or(predicates.toArray(new Predicate[0]));
 	}
 
@@ -141,4 +147,5 @@ public final class MeetingSpecifications {
 			return "%" + searchTerm.toLowerCase() + "%";
 		}
 	}
+
 }

@@ -20,6 +20,7 @@ import eu.transparency.lobbycal.async.ExceptionHandlingAsyncTaskExecutor;
 @Configuration
 @EnableAsync
 @EnableScheduling
+
 public class AsyncConfiguration implements AsyncConfigurer {
 
 	private final Logger log = LoggerFactory

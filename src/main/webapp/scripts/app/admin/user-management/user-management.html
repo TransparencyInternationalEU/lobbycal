@@ -1,5 +1,7 @@
 <div>
-	<h2 translate="user-management.home.title">Users</h2>
+	<h2>
+		{{totalItems}} <span translate="user-management.home.title">Users</span>
+	</h2>
 	<jh-alert></jh-alert>
 	<div class="container">
 		<div class="row">
@@ -17,8 +19,11 @@
 			<thead>
 				<tr>
 					<th></th>
+					<th>ID</th>
 					<th translate="user-management.login">Login</th>
 					<th translate="user-management.email">Email</th>
+					<th translate="user-management.firstName">First</th>
+					<th translate="user-management.lastName">Last</th>
 					<th></th>
 					<th translate="user-management.profiles">Profiles</th>
 					<th translate="user-management.createdDate">CreatedDate</th>
@@ -27,7 +32,8 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="user in users track by user.id">
+				<tr
+					ng-repeat="user in users track by user.id ">
 					<td class="text-right">
 						<button type="submit" title="view"
 							ui-sref="user-management-detail({login:user.login})"
@@ -45,15 +51,19 @@
 							<span class="glyphicon glyphicon-remove-circle"></span>
 						</button>
 					</td>
+					<td><a ui-sref="user-management-detail({login:user.login})">{{user.id}}</a></td>
+
 					<td><a ui-sref="user-management-detail({login:user.login})">{{user.login}}</a></td>
-					<td>{{user.email}}</td>
-					<td><span class="label label-danger"
-						ng-click="setActive(user, true)" ng-show="!user.activated"
-						translate="user-management.deactivated" style="cursor: pointer;">Desactivated</span>
-						<span class="label label-success"
-						ng-click="setActive(user, false)" ng-show="user.activated"
-						translate="user-management.activated" style="cursor: pointer;">Activated</span>
-					</td>
+					<td title="{{user.email}}">{{ user.email| limitTo: 16
+						}}{{user.email.length > 16 ? '...' : ''}}</td>
+					<td title="{{user.firstName}}">{{ user.firstName| limitTo: 16
+						}}{{user.firstName.length > 16 ? '...' : ''}}</td>
+					<td title="{{user.lastName}}">{{ user.lastName| limitTo: 16
+						}}{{user.lastName.length > 16 ? '...' : ''}}</td>
+					<td><span class="label label-danger" ng-show="!user.activated"
+						translate="user-management.deactivated">Desactivated</span> <span
+						class="label label-success" ng-show="user.activated"
+						translate="user-management.activated">Activated</span></td>
 					<td>
 						<div ng-repeat="authority in user.authorities">
 							<span class="label label-info">{{ authority }}</span>
@@ -62,7 +72,6 @@
 					<td>{{user.createdDate | date:'dd/MM/yy HH:mm'}}</td>
 					<td>{{user.lastModifiedBy}}</td>
 					<td>{{user.lastModifiedDate | date:'dd/MM/yy HH:mm'}}</td>
-
 				</tr>
 			</tbody>
 		</table>

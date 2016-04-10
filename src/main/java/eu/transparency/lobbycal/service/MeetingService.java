@@ -360,7 +360,11 @@ public class MeetingService {
 			log.debug("create new partner");
 			Partner np = new Partner();
 			p = Optional.of(np);
-			p.get().setName(givenPartnerName.replace(":", "").trim());
+			String pName = givenPartnerName.replace(":", "").trim();
+			if(pName.length()>255){
+				pName = pName.substring(0, 254);
+			}
+			p.get().setName(pName);
 			p.get().setTransparencyRegisterID(registerID);
 
 			Set<Partner> partners = new HashSet<Partner>();

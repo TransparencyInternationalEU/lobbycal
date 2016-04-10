@@ -3,6 +3,9 @@
 angular.module('lobbycalApp')
     .controller('UserManagementController', function ($scope, User, ParseLinks, Language) {
         $scope.users = [];
+        $scope.sortType     = 'login'; // set the default sort type
+        $scope.sortReverse  = false;  // set the default sort order
+       
         $scope.authorities = ["ROLE_USER", "ROLE_ADMIN"];
         Language.getAll().then(function (languages) {
             $scope.languages = languages;
