@@ -1,0 +1,90 @@
+spring:
+    jpa:
+        open-in-view: false
+        hibernate:
+            ddl-auto: none
+            naming-strategy: org.hibernate.cfg.EJB3NamingStrategy
+    messages:
+        basename: classpath:/i18n/messages
+    mvc:
+        favicon:
+            enabled: false
+    thymeleaf:
+        mode: XHTML
+
+security:
+    basic:
+        enabled: false
+
+# ===================================================================
+# JHipster specific properties
+# ===================================================================
+
+jhipster:
+    async:
+        corePoolSize: 2
+        maxPoolSize: 50
+        queueCapacity: 10000
+    cors: #By default CORS are not enabled. Uncomment to enable.
+        allowed-origins: "*"
+        allowed-methods: GET, PUT, POST, DELETE, OPTIONS
+        allowed-headers: "*"
+        exposed-headers:
+        allow-credentials: true
+        max-age: 1800
+    mail:
+        from: lobbycal@lobbycal 
+    security:
+        rememberme:
+            # security key (this key should be unique for your application, and kept secret)
+            key: 12172397439723954192854983265491854
+    swagger:
+        title: lobbycal API
+        description: lobbycal application programmer interface
+        termsOfServiceUrl: https://github.com/TransparencyInternationalEU/lobbycal
+        contact: Transparency International EU 
+        license: CC0
+        licenseUrl: https://creativecommons.org/publicdomain/zero/1.0/
+
+
+
+
+
+##use ssl not tls
+mail:
+    host: addmailhosthere 
+    port: 465
+    username: u
+    password: p
+    protocol: smtp
+    tls: false
+    auth: true
+    from: senderusername
+    
+    
+catchall:
+        mail:
+                host: catchallmailhost
+                username: uname
+                password: p
+                port: 143
+                nossl: true
+                
+# which meetings should be delivered , choose one of past,future
+# will display all, if property is not set
+lobbycal:
+        meetings:
+                delivery: past
+                fullListURL: http://yourserverwithworpressorstandaloneclient/all
+                reminder:
+                    noNewMeeting:
+                        sinceLastDays: 30
+# do you want to push attachments of emails to lobbycloud?                         
+        lobbycloud:
+                active: false
+                sendTo: info@somone
+                triggerUrl: http://localhost:8080/lobbycloud
+                tag: #lobbycloud
+                
+
+    

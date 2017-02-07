@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="opencal">
+		<class>eu.transparency.lobbycal.domain.AbstractAuditingEntity</class>
+		<class>eu.transparency.lobbycal.domain.Alias</class>
+		<class>eu.transparency.lobbycal.domain.Authority</class>
+		<class>eu.transparency.lobbycal.domain.Meeting</class>
+		<class>eu.transparency.lobbycal.domain.Meeting_</class>
+		<class>eu.transparency.lobbycal.domain.Partner</class>
+		<class>eu.transparency.lobbycal.domain.PersistentAuditEvent</class>
+		<class>eu.transparency.lobbycal.domain.PersistentToken</class>
+		<class>eu.transparency.lobbycal.domain.Submitter</class>
+		<class>eu.transparency.lobbycal.domain.Tag</class>
+		<class>eu.transparency.lobbycal.domain.User</class>
+		<class>eu.transparency.lobbycal.domain.User_</class>
+	</persistence-unit>
+</persistence>

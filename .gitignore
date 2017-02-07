@@ -121,3 +121,5 @@ Desktop.ini
 # Gradle Wrapper
 ######################
 !gradle/wrapper/gradle-wrapper.jar
+/elasticsearch/
+/data/

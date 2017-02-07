@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findOneByActivationKey(String activationKey);
 
-    List<User> findAllByActivatedIsFalseAndCreatedDateBefore(ZonedDateTime dateTime);
+	List<User> findAllByActivatedIsFalseAndCreatedDateBefore(ZonedDateTime dateTime);
 
 	Optional<User> findOneByResetKey(String resetKey);
 
@@ -25,14 +25,21 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findOneByLogin(String login);
 
-	List<User> findAllByLogin(String login);
-	
-    Optional<User> findOneById(Long userId);
-    
-    Page<User> findAllByOrderByLastNameAscLoginAsc(Pageable pageable);
+	Page<User> findOneByLoginOrderByLastNameAsc(Pageable pageable, String login);
 
+	Page<User> findAllByActivatedOrderByLastNameAsc(Pageable pageable, boolean active);
+
+	List<User> findAllByLogin(String login);
+
+	Optional<User> findOneById(Long userId);
+
+	Page<User> findAllByOrderByLastNameAscLoginAsc(Pageable pageable);
 
 	@Override
 	void delete(User t);
+
+	List<User> findAllByActivatedIsTrueAndNotificationEnabledIsTrue();
+
+	List<User> findAllByActivatedIsTrueAndNotificationOfSubmittersEnabledIsTrue();
 
 }

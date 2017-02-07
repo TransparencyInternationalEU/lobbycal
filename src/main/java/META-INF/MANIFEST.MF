@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: lobbycal
+Implementation-Version: 2.0.9
+Archiver-Version: Plexus Archiver
+Built-By: lobbycal
+Implementation-Vendor-Id: eu.transparency.lobbycal
+Created-By: Apache Maven 3.3.3
+Build-Jdk: 1.8.0_31
+Implementation-Vendor: Pivotal Software, Inc.
+

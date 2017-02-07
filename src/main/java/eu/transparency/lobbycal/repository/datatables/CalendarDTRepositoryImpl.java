@@ -1,6 +1,7 @@
 package eu.transparency.lobbycal.repository.datatables;
 
 import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import eu.transparency.lobbycal.web.rest.MeetingSpecifications;
 
+@Transactional
 public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID>
 		implements CalendarDTRepository<T, ID> {
 
@@ -37,6 +39,8 @@ public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends Simple
 		log.info("");
 	}
 
+	
+	
 	public CalendarDTRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {
 		super(entityInformation, entityManager);
 		log.info("");
@@ -50,6 +54,61 @@ public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends Simple
 		return findAll(input, null);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	@Transactional(readOnly = true)
+	public DataTablesOutput<T> findAllForOne(DataTablesInput input, Specification<T> additionalSpecification,
+			boolean future) {
+		log.info("find all for one mep, future?:" +future);
+		DataTablesOutput<T> output = new DataTablesOutput<T>();
+		output.setDraw(input.getDraw());
+
+		try {
+			output.setRecordsTotal(count());
+
+			Page<T> data = null;
+			if (future) {
+
+				data = findAll(
+						Specifications.where(new DataTablesSpecification<T>(input)).and(additionalSpecification)
+								.or((Specification<T>) MeetingSpecifications
+										.hasPartner(input.getSearch().getValue().toLowerCase(), null)).and(additionalSpecification)
+								.or((Specification<T>) MeetingSpecifications
+										.hasTag(input.getSearch().getValue().toLowerCase(), null)).and(additionalSpecification)
+								.or((Specification<T>) MeetingSpecifications
+										.hasUserName(input.getSearch().getValue().toLowerCase(), null)).and(additionalSpecification),
+						getPageable(input));
+
+			} else {
+				data = findAll(Specifications.where(new DataTablesSpecification<T>(input)).and(additionalSpecification)
+						.and((Specification<T>) MeetingSpecifications.past())
+
+						.or((Specification<T>) MeetingSpecifications
+								.hasPartner(input.getSearch().getValue().toLowerCase(), null))
+						.and(additionalSpecification).and((Specification<T>) MeetingSpecifications.past())
+
+						.or((Specification<T>) MeetingSpecifications.hasTag(input.getSearch().getValue().toLowerCase(),
+								null))
+						.and(additionalSpecification).and((Specification<T>) MeetingSpecifications.past())
+
+						.or((Specification<T>) MeetingSpecifications
+								.hasUserName(input.getSearch().getValue().toLowerCase(), null))
+						.and(additionalSpecification).and((Specification<T>) MeetingSpecifications.past())
+
+						, getPageable(input));
+			}
+			output.setData(data.getContent());
+			output.setRecordsFiltered(data.getTotalElements());
+
+		} catch (Exception e) {
+			output.setError(e.toString());
+			output.setRecordsFiltered(0L);
+		}
+
+		return output;
+	}
+
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional(readOnly = true)
 	public DataTablesOutput<T> findAll(DataTablesInput input, Specification<T> additionalSpecification) {
@@ -75,7 +134,7 @@ public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends Simple
 							null))
 					.and(additionalSpecification).and((Specification<T>) MeetingSpecifications.past())
 
-			, getPageable(input));
+					, getPageable(input));
 
 			output.setData(data.getContent());
 			output.setRecordsFiltered(data.getTotalElements());
@@ -96,6 +155,7 @@ public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends Simple
 	 *            the {@link DataTablesInput} mapped from the Ajax request
 	 * @return a {@link Pageable}, must not be {@literal null}.
 	 */
+	@Transactional
 	private Pageable getPageable(DataTablesInput input) {
 
 		List<Order> orders = new ArrayList<Order>();
@@ -113,7 +173,7 @@ public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends Simple
 			input.setStart(0);
 			input.setLength(Integer.MAX_VALUE);
 		}
-		
+
 		return new PageRequest(input.getStart() / input.getLength(), input.getLength(), sort);
 	}
 }

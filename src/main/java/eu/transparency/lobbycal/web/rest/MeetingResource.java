@@ -4,6 +4,7 @@ import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -68,20 +69,26 @@ public class MeetingResource {
 
 	private final Logger log = LoggerFactory.getLogger(MeetingResource.class);
 
+
 	@Inject
 	private Environment env;
+
 
 	@Inject
 	private MeetingRepository meetingRepository;
 
+
 	@Inject
 	private MeetingDTRepository meetingDTRepository;
+
 
 	@Inject
 	private MeetingMapper meetingMapper;
 
+
 	@Inject
 	private MeetingSearchRepository meetingSearchRepository;
+
 
 	@Inject
 	private UserRepository userRepository;
@@ -93,16 +100,18 @@ public class MeetingResource {
 	@Timed
 	public ResponseEntity<Void> create(@RequestBody
 	MeetingDTO meetingDTO) throws URISyntaxException {
+
 		Optional<User> u2 = userRepository.findOneByLogin(SecurityUtils.getCurrentUser().getUsername());
 		log.debug("REST request to save Meeting : {}", meetingDTO);
-		log.info(""+u2.get().getLogin());
+		log.info("" + u2.get().getLogin());
 		if (meetingDTO.getId() != null) {
 			return ResponseEntity.badRequest().header("Failure", "A new meeting cannot already have an ID").build();
 		}
 		Meeting meeting = meetingMapper.meetingDTOToMeeting(meetingDTO);
-		
-		log.info("set user from "  + u2.get().getLogin());
+
+		log.info("set user from " + u2.get().getLogin());
 		meeting.setUser(u2.get());
+		meeting.setCreatedDate(ZonedDateTime.now());
 		meetingRepository.save(meeting);
 		meetingSearchRepository.save(meeting);
 		return ResponseEntity.created(new URI("/api/meetings/" + meetingDTO.getId())).build();
@@ -121,10 +130,14 @@ public class MeetingResource {
 			log.debug("");
 			return create(meetingDTO);
 		}
-		// maintain submitter and alias and uid 
+		// maintain submitter and alias and uid
 		Meeting existingMeeting = meetingRepository.findOne(meetingDTO.getId());
 		log.info(meetingDTO.getUserLastName());
 		Meeting meeting = meetingMapper.meetingDTOToMeeting(meetingDTO);
+		if(meeting.getCreatedDate()==null){
+			log.info("FIX as date has been introduced later");
+			meeting.setCreatedDate(ZonedDateTime.now());
+		}
 		meeting.setAliasUsed(existingMeeting.getAliasUsed());
 		meeting.setUid(existingMeeting.getUid());
 		meeting.setSubmitter(existingMeeting.getSubmitter());
@@ -252,6 +265,7 @@ public class MeetingResource {
 				.collect(Collectors.toCollection(LinkedList::new)), headers, HttpStatus.OK);
 	}
 
+
 	String mepIds = "";
 
 	@RequestMapping(value = "/meetings/dt", method = RequestMethod.GET)
@@ -261,6 +275,7 @@ public class MeetingResource {
 	public DataTablesOutput<MeetingDTO> getAllForDatatable(@Valid
 	DataTablesInput input) throws URISyntaxException {
 
+		mepIds = "";
 		userRepository.findAll().stream().forEach(user -> {
 			mepIds += user.getId() + ",";
 		});
@@ -276,20 +291,32 @@ public class MeetingResource {
 	DataTablesInput input) throws URISyntaxException {
 
 		SearchParameter sp = input.getSearch();
-		log.warn("terms: "+sp.toString() + ": " + sp.getValue());
+		log.debug("terms: " + " " + sp.getValue() + " \n\t ids:   " + ids);
 		DataTablesOutput<Meeting> dto = null;
 
 		Collection<Long> mepIds = new ArrayList<Long>();
 		Iterator<String> sMepIds = Arrays.asList(ids.split(",")).iterator();
 		while (sMepIds.hasNext()) {
-			mepIds.add(Long.parseLong(sMepIds.next()));
+			Long currentId = Long.parseLong(sMepIds.next());
+			if (!mepIds.contains(currentId)) {
+				mepIds.add(currentId);
+			}
 		}
 
+		log.info("retrieving meetings for " + mepIds.size() + " users");
 		String sf = sp.getValue().toLowerCase();
-
-		dto = meetingDTRepository.findAll(input, MeetingSpecifications.hasTerm(sf, mepIds));
+		if (mepIds.size() == 1) {
+			User rUser = userRepository.findOneById(((Long)mepIds.toArray()[0])).get();
+			if(rUser.isShowFutureMeetings()){
+				dto= meetingDTRepository.findAllForOne(input, MeetingSpecifications.hasTerm(sf, mepIds),true);
+			}else{
+				dto= meetingDTRepository.findAllForOne(input, MeetingSpecifications.hasTerm(sf, mepIds),false);
+			}
+		} else {
+			dto = meetingDTRepository.findAll(input, MeetingSpecifications.hasTerm(sf, mepIds));
+		}
 		if (dto.getData() != null) {
-			log.info("hits: "+dto.getData().size() + "");
+			log.info("hits: " + dto.getData().size() + "");
 		}
 		DataTablesOutput<MeetingDTO> dtor = new DataTablesOutput<MeetingDTO>();
 		try {

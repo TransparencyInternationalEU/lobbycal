@@ -1,6 +1,6 @@
 // selected  mep only
 // if no list of comma separated ids is given, all meetings are displayed
-var meetingsUrl = "https://lobbycal.greens-efa-service.eu/api/meetings/dt/"; // 41,9,8,44,45,46,47,48,54,55,56,26";
+var meetingsUrl = "https://askyouradmin/api/meetings/dt/"; // 41,9,8,44,45,46,47,48,54,55,56,26";
 
 var lc2pShowStart = '1';
 // Display column for start date?

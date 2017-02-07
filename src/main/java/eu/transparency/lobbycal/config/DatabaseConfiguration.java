@@ -89,7 +89,7 @@ public class DatabaseConfiguration {
 //			config.setIdleTimeout(30000);
 //			config.setMaxLifetime(60000);
 //			config.setConnectionTimeout(9000);
-//			config.setMaximumPoolSize(16);
+			config.setMaximumPoolSize(100);
 		}
 		if (metricRegistry != null) {
 			config.setMetricRegistry(metricRegistry);

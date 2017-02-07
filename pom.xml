@@ -11,10 +11,10 @@
 
     <groupId>eu.transparency.lobbycal</groupId>
     <artifactId>lobbycal</artifactId>
-    <version>2.2.1</version>
+    <version>3.0.0</version>
     <packaging>war</packaging>
 
-    <name>lobbycal</name>
+     <name>lobbycal</name>
     <url>https://github.com/TransparencyInternationalEU</url>
 
     <prerequisites>
@@ -29,7 +29,7 @@
         <gatling-maven-plugin.version>2.1.7</gatling-maven-plugin.version>
         <gatling.version>2.1.7</gatling.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
-        <hikaricp.version>2.4.5</hikaricp.version>
+        <hikaricp.version>2.4.6</hikaricp.version>
         <jacoco-maven-plugin.version>0.7.4.201502262128</jacoco-maven-plugin.version>
         <java.version>1.8</java.version>
         <javax.inject.version>1</javax.inject.version>
@@ -68,7 +68,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-hibernate4</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -257,11 +256,16 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.jodd</groupId>
+            <artifactId>jodd-lagarto</artifactId>
+            <version>3.7.1</version>
+        </dependency>
 
         <dependency>
             <groupId>org.jodd</groupId>
             <artifactId>jodd-mail</artifactId>
-            <version>3.6.6</version>
+            <version>3.7.1</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
@@ -299,6 +303,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -652,7 +660,7 @@
             </activation>
             <properties>
                 <!-- log configuration -->
-                <logback.loglevel>DEBUG</logback.loglevel>
+                <logback.loglevel>INFO</logback.loglevel>
             </properties>
             <dependencies>
                 <dependency>

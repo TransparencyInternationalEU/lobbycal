@@ -7,11 +7,12 @@ import org.springframework.data.jpa.domain.Specification;
 
 import eu.transparency.lobbycal.domain.Meeting;
 
-public interface MeetingDTRepository extends
-		DataTablesRepository<Meeting, Long> {
+public interface MeetingDTRepository extends DataTablesRepository<Meeting, Long> {
 
-	DataTablesOutput<Meeting> findAll(DataTablesInput input,
-			Specification<Meeting> additionalSpecification);
+	DataTablesOutput<Meeting> findAll(DataTablesInput input, Specification<Meeting> additionalSpecification);
+
+	DataTablesOutput<Meeting> findAllForOne(DataTablesInput input, Specification<Meeting> additionalSpecification,
+			boolean future);
 
 	DataTablesOutput<Meeting> findAll(DataTablesInput input);
 

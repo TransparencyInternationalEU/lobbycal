@@ -1,18 +1,16 @@
 package eu.transparency.lobbycal.service;
 
-import java.io.UnsupportedEncodingException;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
-
-import jodd.mail.MailAddress;
-import net.fortuna.ical4j.model.Calendar;
-import net.fortuna.ical4j.model.DateTime;
-import net.fortuna.ical4j.model.component.VEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +34,14 @@ import eu.transparency.lobbycal.repository.TagRepository;
 import eu.transparency.lobbycal.repository.UserRepository;
 import eu.transparency.lobbycal.repository.search.MeetingSearchRepository;
 import eu.transparency.lobbycal.security.SecurityUtils;
+import jodd.io.FileUtil;
+import jodd.io.NetUtil;
+import jodd.jerry.Jerry;
+import jodd.jerry.JerryFunction;
+import jodd.mail.MailAddress;
+import jodd.util.SystemUtil;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.component.VEvent;
 
 /**
  * Handles parsing of incoming emails
@@ -46,36 +52,50 @@ import eu.transparency.lobbycal.security.SecurityUtils;
 @Service
 @Transactional
 public class MeetingService {
+
 	private static final Pattern TAG_PATTERN = Pattern.compile("(?:^|\\s|[\\p{Punct}&&[^/]])(#[\\p{L}0-9-_]+)");
 
+
 	private final Logger log = LoggerFactory.getLogger(MeetingService.class);
+
+
+	static String name = "";
+
 
 	@Inject
 	private AuditEventPublisher auditPublisher;
 
+
 	@Inject
 	private MeetingRepository meetingRepository;
+
 
 	@Inject
 	private MeetingSearchRepository meetingSearchRepository;
 
+
 	@Inject
 	private UserRepository userRepository;
+
 
 	@Inject
 	private PartnerRepository partnerRepository;
 
+
 	@Inject
 	private TagRepository tagRepository;
 
+
 	@Inject
 	private SubmitterRepository submitterRepository;
+
 
 	@Inject
 	private AliasRepository aliasRepository;
 
 	public Optional<Meeting> processRequest(MailAddress[] mailTOsAndCCs, MailAddress fromEmail, Calendar calendar,
 			String emailSubject, String encoding) {
+
 		try {
 			log.debug("processing  meeting {} for to/cc {} and submitter {} for event {}",
 					calendar.getProperty("METHOD").getValue(), mailTOsAndCCs, fromEmail.getEmail(),
@@ -112,15 +132,14 @@ public class MeetingService {
 				return Optional.empty();
 			}
 
-			// 2: check if there is a user whose email matches FROM....
+			// 2: check if there is a user or submitter whose email matches
+			// FROM:
 			Optional<User> user = userRepository.findOneByEmail(userWithAlias.getEmail());
 			String submitterInFact = null;
 			if (user.isPresent()) {
 				log.debug("" + user.get().getEmail());
-				// .... or whose allowed submitter emails matches FROM
-				for (Submitter submitter : submitterRepository
-						// .findAllForCurrentUser()
-						.findAllByUserId(user.get().getId())) {
+				// .... or whose allowed submitter emails matches FROM:
+				for (Submitter submitter : submitterRepository.findAllByUserId(user.get().getId())) {
 					log.debug("Submitter email: " + submitter.getEmail());
 					if (submitter.getEmail().compareToIgnoreCase(fromEmail.getEmail()) == 0) {
 						// submitter is still active?
@@ -231,7 +250,6 @@ public class MeetingService {
 
 						String value = new String(vevent.getSummary().getValue());
 
-
 						parseSubject(value, stored.get());
 						meetingRepository.save(stored.get());
 						meetingSearchRepository.save(stored.get());
@@ -245,7 +263,7 @@ public class MeetingService {
 
 				} else {
 
-					// we need to have the CANCEl Block here again, as horde
+					// we need to have the CANCEL Block here again, as horde
 					// adds 2
 					// cancellation .ics files to the cancelation email
 					// DELETE
@@ -268,10 +286,7 @@ public class MeetingService {
 							.convert(vevent.getStartDate().getDate()));
 					newMeeting.setEndDate(JSR310DateConverters.DateToZonedDateTimeConverter.INSTANCE
 							.convert(vevent.getEndDate().getDate()));
-					byte ptext[] = vevent.getSummary().getValue().getBytes(encoding);
 					String value = vevent.getSummary().getValue();
-
-				
 
 					parseSubject(value, newMeeting);
 					meetingRepository.save(newMeeting);
@@ -284,8 +299,9 @@ public class MeetingService {
 				log.debug("");
 			}
 			log.debug("");
-		} catch (UnsupportedEncodingException uec) {
+		} catch (Exception uec) {
 			log.error("" + uec.getMessage());
+			uec.printStackTrace();
 			return Optional.empty();
 		}
 		return Optional.empty();
@@ -303,21 +319,23 @@ public class MeetingService {
 	private Meeting parseSubject(String emailSubject, Meeting meeting) {
 
 		// Parse data from event title: Partner, title, transparency register ID
-		// – ignoring everything that !
-		// ! follows a special “EOF” character.!
-		// ! Example title:!
-		// ! GESAC: Exceptions and limitations 30161717506-48 * +49 123 456!
-		// ! [Partner]: [Title] [TransparencyRegisterID] * [comment]!
-		// ! [Partner]: [Title] [TransparencyRegisterID] [#tag1 ][#tag2] *
-		// [comment]!
+		// – ignoring everything that
+		// follows a special “EOF” character: '*'
+		// Example title:
+		// GESAC: Exceptions and limitations 30161717506-48 * +49 123 456
+		// [Partner]: [Title] [TransparencyRegisterID] * [comment]
+		// [Partner]: [Title] [TransparencyRegisterID] [#tag1 ][#tag2] *
+		// [comment]
 
-		String registerID = "";
 		String title = "";
-		String tridRegex = "(\\d{9}|\\d{10}|\\d{11}|\\d{12})-\\d{2}";
+		String transparencyRegisterIDdRegex = null;//"(\\d{9}|\\d{10}|\\d{11}|\\d{12})-\\d{2}|noid|NOID|noID|noId|NoId|NoID";
+		transparencyRegisterIDdRegex = "(\\d{9}|\\d{10}|\\d{11}|\\d{12})-\\d{2}[;,]*+|noid[;,]*+|NOID[;,]*+|noID[;,]*+|noId[;,]*+|NoId[;,]*+|NoID[;,]*+";
 
 		if (emailSubject.contains("*")) {
 			emailSubject = emailSubject.substring(0, emailSubject.indexOf("*"));
 		}
+
+		// TAGS
 
 		Matcher tagMatcher = TAG_PATTERN.matcher(emailSubject);
 		Set<Tag> tags = new HashSet<Tag>();
@@ -328,7 +346,7 @@ public class MeetingService {
 			aTag.seti18nKey(current);
 			aTag.setEn(current);
 			aTag.setId(current.hashCode() * 1l);
-			log.debug("adding tag " + aTag.geti18nKey() + ":" + tags.add(tagRepository.saveAndFlush(aTag)));
+			log.debug("adding tag " + aTag.geti18nKey() + ": " + tags.add(tagRepository.saveAndFlush(aTag)));
 
 		}
 		meeting.setTags(tags);
@@ -340,47 +358,115 @@ public class MeetingService {
 
 		}
 
-		if (emailSubject.contains(":")) {
-			String givenPartnerName = emailSubject.substring(0, emailSubject.lastIndexOf(":")).trim();
+		// PARTNERS
 
+		ArrayList<String> registerIDs = new ArrayList<String>();
+		ArrayList<String> partnerNames = new ArrayList<String>();
+		String givenPartnerName = "";
+		// if colon in subject line
+
+		title = emailSubject.substring(emailSubject.lastIndexOf(":") == -1 ? 0 : emailSubject.lastIndexOf(":"))
+				.replace(":", "").trim();
+		log.info(title);
+		Matcher m = Pattern.compile(transparencyRegisterIDdRegex).matcher(emailSubject);
+		while (m.find()) {
+			String c = m.group();
+			log.info(c);
+			registerIDs.add(c.replaceAll(",", "").replaceAll(";",""));
+			title = title.replace(c, "");
+		}
+		// strip out register ids
+
+		boolean existsPartnerNameFromSubject = false;
+		if (emailSubject.contains(":")) {
+			givenPartnerName = emailSubject.substring(0, emailSubject.lastIndexOf(":")).trim();
+			// remove re: reply to: etc
 			givenPartnerName = givenPartnerName.substring(givenPartnerName.lastIndexOf(":") + 1).trim();
 
-			log.debug("Given partner name\t|" + givenPartnerName + "|");
-
-			title = emailSubject.substring(emailSubject.lastIndexOf(":")).replace(":", "").trim();
-			Matcher m = Pattern.compile(tridRegex).matcher(title);
-			if (m.find()) {
-				title = title.substring(0, m.start()).replace(":", "").trim();
-				registerID = m.group();
-			} else {
-				log.warn("No reg ID in title \t|" + title + " \tregex:  " + tridRegex);
+			for (String id : registerIDs) {
+				log.info(id);
+				givenPartnerName = givenPartnerName.replace(id.trim(), "");
+				title = title.replace(id.trim(), "").replace("noId", "").replace("NOID", "").replace("noid", "")
+						.replace("noID", "").replace("Noid", "").replace("NoId", "");
 			}
-			Optional<Partner> p = null;
+			log.info("Given partner name\t|" + givenPartnerName + "|");
+			// tokenize
+			StringTokenizer stok = new StringTokenizer(givenPartnerName, ";");
+			while (stok.hasMoreTokens()) {
+				String subPartnerName = stok.nextToken().trim();
+				log.info(subPartnerName);
+				partnerNames.add(subPartnerName);
+			}
+			existsPartnerNameFromSubject = true;
 
-			log.debug("create new partner");
+		}
+		Set<Partner> partners = new HashSet<Partner>();
+
+		log.debug("create new partners");
+		// no colon p name > handle as usual
+		// colon p name > count tokens and noIDs > assign parsed trid in order
+		// of appearance
+		if (!existsPartnerNameFromSubject) {
+			partnerNames = registerIDs;
+		}
+		for (int i = 0; i < partnerNames.size(); i++) {
+			Optional<Partner> p = null;
 			Partner np = new Partner();
 			p = Optional.of(np);
-			String pName = givenPartnerName.replace(":", "").trim();
-			if(pName.length()>255){
-				pName = pName.substring(0, 254);
+
+			if (existsPartnerNameFromSubject) {
+				log.info(i + "");
+				String pName = partnerNames.get(i).trim();
+				String regid = i < registerIDs.size() ? registerIDs.get(i) : "noid";
+				if (pName.length() > 255) {
+					pName = pName.substring(0, 254);
+				}
+				p.get().setName(pName);
+				p.get().setTransparencyRegisterID(regid.toLowerCase().compareTo("noid")==0?"":regid);
+			} else {
+				// p.get().setName(getPartnerNameFromTransparencyRegister(string));
+				p.get().setTransparencyRegisterID(registerIDs.get(i));
 			}
-			p.get().setName(pName);
-			p.get().setTransparencyRegisterID(registerID);
-
-			Set<Partner> partners = new HashSet<Partner>();
+			log.info("Adding partner " + p.get().toString());
 			partners.add(partnerRepository.saveAndFlush(p.get()));
-			meeting.setPartners(partners);
-
-			meeting.setTitle(title);
-
-		} else {
-			meeting.setTitle(emailSubject);
 		}
+
+		meeting.setPartners(partners);
+
+		meeting.setTitle(title.replace("  ", " "));
 
 		return meeting;
 	}
 
+	private String getPartnerNameFromTransparencyRegister(String string) {
+
+		try {
+			File file = new File(SystemUtil.tempDir(), "partner.html");
+			NetUtil.downloadFile(
+					"http://ec.europa.eu/transparencyregister/public/consultation/displaylobbyist.do?id=" + string,
+					file);
+			name = "";
+			// create Jerry, i.e. document context
+			Jerry doc = Jerry.jerry(FileUtil.readString(file));
+			// parse
+			doc.$("div.panel-body h4").each(new JerryFunction() {
+
+				public boolean onNode(Jerry $this, int index) {
+
+					name = $this.$("b").text();
+					return true;
+				}
+			});
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		log.info(name);
+		return name;
+	}
+
 	void auditThis(String[] msg, String type) {
+
 		if (type == null) {
 			type = AuditEventPublisher.TYPE_MEETING;
 		}

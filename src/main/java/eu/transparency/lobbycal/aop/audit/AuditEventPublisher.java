@@ -30,10 +30,12 @@ public class AuditEventPublisher implements ApplicationEventPublisherAware {
 
 	public static String TYPE_MAIL = "MAIL_EVENT";
 
+	public static String TYPE_LOBBYCLOUD = "LOBBYCLOUD_EVENT";
+
 	@Override
 	public void setApplicationEventPublisher(ApplicationEventPublisher publisher) {
 		this.publisher = publisher;
-		log.warn("");
+		log.debug("");
 
 	}
 

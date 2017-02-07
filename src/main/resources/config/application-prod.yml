@@ -1,0 +1,86 @@
+server:
+    port: 8080
+liquibase:
+    contexts: prod
+    
+spring:
+    profiles:
+        active: prod
+    datasource:
+        driver-class-name: com.mysql.jdbc.jdbc2.optional.MysqlDataSource
+        url: jdbc:mysql://localhost:3306/lobbycal?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull
+        databaseName: 
+        serverName: 
+        username: lobbycal
+        password: lobbycal
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+    jpa:
+        database-platform: org.hibernate.dialect.MySQLInnoDBDialect
+        database: MYSQL
+        openInView: false
+        show_sql: false
+        generate-ddl: false
+        hibernate:
+            ddl-auto: none
+            naming-strategy: org.hibernate.cfg.EJB3NamingStrategy
+        properties:
+            hibernate.cache.use_second_level_cache: true
+            hibernate.cache.use_query_cache: true
+            hibernate.generate_statistics: true
+            hibernate.cache.region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+
+    messages:
+        basename: classpath:/i18n/messages
+    mvc:
+        favicon:
+            enabled: false
+    thymeleaf:
+        mode: XHTML
+        
+
+security:
+    basic:
+        enabled: false
+
+# ===================================================================
+# JHipster specific properties
+# ===================================================================
+
+jhipster:
+    async:
+        corePoolSize: 2
+        maxPoolSize: 50
+        queueCapacity: 10000
+    mail:
+        from: info@you 
+    security:
+        rememberme:
+            # security key (this key should be unique for your application, and kept secret)
+            key: 12172397439723954192854983265491854
+    swagger:
+        version: 2.0.0
+        title: lobbycal API
+        description: lobbycal application programmer interface
+        termsOfServiceUrl: https://github.com/TransparencyInternationalEU/lobbycal
+        contact: Transparency International EU 
+        license: CC0
+        licenseUrl: https://creativecommons.org/publicdomain/zero/1.0/
+
+metrics:
+    jmx.enabled: false
+    spark:
+        enabled: false
+        host: localhost
+        port: 9999
+    graphite:
+        enabled: false
+        host: localhost
+        port: 2003
+        prefix: lobbycal
+
+
+    
+    

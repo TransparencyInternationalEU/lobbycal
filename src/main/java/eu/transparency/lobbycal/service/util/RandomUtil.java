@@ -3,7 +3,7 @@ package eu.transparency.lobbycal.service.util;
 import org.apache.commons.lang.RandomStringUtils;
 
 /**
- * Utility class for generating random Strings.
+ * Utility class for generating random AcceptedMimeTypes.
  */
 public final class RandomUtil {
 

@@ -15,6 +15,7 @@ public class Meeting_ {
 	public static volatile SingularAttribute<Meeting, String> aliasUsed;
 	public static volatile SingularAttribute<Meeting, ZonedDateTime> startDate;
 	public static volatile SingularAttribute<Meeting, ZonedDateTime> endDate;
+	public static volatile SingularAttribute<Meeting, ZonedDateTime> createdDate;
 	public static volatile SingularAttribute<Meeting, String> uid;
 	public static volatile SetAttribute<Meeting, Tag> tags;
 	public static volatile SetAttribute<Meeting, Partner> partners;

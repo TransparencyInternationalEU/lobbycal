@@ -16,10 +16,15 @@ public class User_ extends AbstractAuditingEntity {
 	public static volatile SingularAttribute<User, String> lastName;
 	public static volatile SingularAttribute<User, String> email;
 	public static volatile SingularAttribute<User, Boolean> activated;
+	public static volatile SingularAttribute<User, Boolean> notificationEnabled;
+	public static volatile SingularAttribute<User, Boolean> notificationOfSubmittersEnabled;
+	public static volatile SingularAttribute<User, Boolean> showFutureMeetings;
+	public static volatile SingularAttribute<User, Boolean> lobbycloudSharingEnabled;
 	public static volatile SingularAttribute<User, String> langKey;
 	public static volatile SingularAttribute<User, String> activationKey;
 	public static volatile SingularAttribute<User, String> resetKey;
 	public static volatile SingularAttribute<User, ZonedDateTime> resetDate;
+	public static volatile SingularAttribute<User, ZonedDateTime> lastNotified;
 	public static volatile SetAttribute<User, Authority> authorities;
 	public static volatile SetAttribute<User, Alias> aliases;
 	public static volatile SetAttribute<User, PersistentToken> persistentTokens;

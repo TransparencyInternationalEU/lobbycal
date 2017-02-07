@@ -14,6 +14,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.audit.AuditEvent;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +52,11 @@ import eu.transparency.lobbycal.web.rest.util.HeaderUtil;
 public class AccountResource {
 
 	private final Logger log = LoggerFactory.getLogger(AccountResource.class);
+	@Inject
+	private Environment env;
 
+
+	
 	@Inject
 	private AuditEventPublisher auditPublisher;
 
@@ -163,11 +169,12 @@ public class AccountResource {
 	@Timed
 	@RolesAllowed({ AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER })
 	public ResponseEntity<UserDTO> getAccount() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("days", env.getProperty("lobbycal.meetings.reminder.noNewMeeting.sinceLastDays", "" + 21));
 
 		log.info("");
-
 		return Optional.ofNullable(userService.getUserWithAuthorities())
-				.map(user -> new ResponseEntity<>(new UserDTO(user), HttpStatus.OK))
+				.map(user -> new ResponseEntity<>(new UserDTO(user), headers, HttpStatus.OK))
 				.orElse(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 	}
 
@@ -180,7 +187,7 @@ public class AccountResource {
 	UserDTO userDTO) {
 
 		Optional<User> existingUser = userRepository.findOneByEmail(userDTO.getEmail());
-		log.info("");
+		log.info("show future? " + userDTO.isShowFutureMeetings());
 
 		if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userDTO.getLogin()))) {
 			return ResponseEntity.badRequest()
@@ -189,7 +196,7 @@ public class AccountResource {
 		}
 		return userRepository.findOneByLogin(SecurityUtils.getCurrentUser().getUsername()).map(u -> {
 			userService.updateUserInformation(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
-					userDTO.getLangKey());
+					userDTO.getLangKey(), userDTO.isShowFutureMeetings(), userDTO.isNotificationEnabled(), userDTO.isNotificationOfSubmittersEnabled(), null, userDTO.isLobbycloudSharingEnabled());
 			return new ResponseEntity<String>(HttpStatus.OK);
 		}).orElseGet(() -> new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 	}

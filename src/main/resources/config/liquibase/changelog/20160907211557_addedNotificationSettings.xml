@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+   <changeSet author="lobbycal" id="1473282969884-1">
+      <addColumn tableName="JHI_USER">
+         <column name="last_notified" type="datetime"/>
+      </addColumn>
+   </changeSet>
+   <changeSet author="lobbycal" id="1473282969884-2">
+      <addColumn tableName="JHI_USER">
+         <column name="notificationEnabled" type="bit" defaultValueBoolean="false">
+            <constraints nullable="false"/>
+         </column>
+      </addColumn>
+   </changeSet>
+   <changeSet author="lobbycal" id="1473282969884-3">
+      <addColumn tableName="JHI_USER">
+         <column name="notificationOfSubmittersEnabled" type="bit" defaultValueBoolean="false">
+            <constraints nullable="false"/>
+         </column>
+      </addColumn>
+   </changeSet>
+</databaseChangeLog>

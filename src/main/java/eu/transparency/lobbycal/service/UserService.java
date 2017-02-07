@@ -139,6 +139,7 @@ public class UserService {
 		newUser.setActivationKey(RandomUtil.generateActivationKey());
 		authorities.add(authority);
 		newUser.setAuthorities(authorities);
+		newUser.setLobbycloudSharingEnabled(false);
 		userRepository.save(newUser);
 		// userSearchRepository.save(newUser);
 		log.debug("Created Information for User: {}", newUser);
@@ -166,21 +167,28 @@ public class UserService {
 		user.setResetKey(RandomUtil.generateResetKey());
 		user.setResetDate(ZonedDateTime.now());
 		user.setActivated(true);
+		user.setShowFutureMeetings(false);
+		user.setLobbycloudSharingEnabled(false);
 		userRepository.save(user);
 		log.debug("Created Information for User: {}", user);
 		return user;
 	}
 
-	public void updateUserInformation(String firstName, String lastName, String email, String langKey) {
-
+	public void updateUserInformation(String firstName, String lastName, String email, String langKey, boolean showFuture, boolean notificationEnabled,
+			boolean notificationOfSubmittersEnabled, ZonedDateTime lastNotified, boolean lobbycloudSharingEnabled) {
+		log.info(""+showFuture);
 		userRepository.findOneByLogin(SecurityUtils.getCurrentUser().getUsername()).ifPresent(u -> {
 			u.setFirstName(firstName);
 			u.setLastName(lastName);
 			u.setEmail(email);
 			u.setLangKey(langKey);
+			u.setShowFutureMeetings(showFuture);
+			u.setNotificationEnabled(notificationEnabled);
+			u.setNotificationOfSubmittersEnabled(notificationOfSubmittersEnabled);
+			u.setLobbycloudSharingEnabled(lobbycloudSharingEnabled);
 			userRepository.save(u);
 			// userSearchRepository.save(u);
-			log.debug("Changed Information for User: {}", u);
+			log.info("Changed Information for User: {}", u);
 		});
 	}
 
@@ -249,6 +257,16 @@ public class UserService {
 		user.getAuthorities().size(); // eagerly load the association
 		return user;
 	}
+	
+	
+	@Transactional
+	public void setUserNotified(Long id) {
+		log.debug("");
+		User user = userRepository.findOne(id);
+		user.setLastNotified(ZonedDateTime.now()); // eagerly load the association
+		userRepository.save(user);
+		
+	}
 
 	@Transactional(readOnly = true)
 	public User getUserWithAuthorities() {
@@ -259,6 +277,23 @@ public class UserService {
 		return user;
 	}
 
+	@Transactional(readOnly = true)
+	public List<User> getUsersWithNotificationsActivated() {
+
+		List<User> user = userRepository.findAllByActivatedIsTrueAndNotificationEnabledIsTrue();
+		return user;
+	}
+
+	@Transactional(readOnly = true)
+	public List<User> getUsersWithNotificationsOfSubmittersActivated() {
+
+		List<User> user = userRepository.findAllByActivatedIsTrueAndNotificationOfSubmittersEnabledIsTrue();
+		return user;
+	}
+
+	
+	
+	
 	/**
 	 * Persistent Token are used for providing automatic authentication, they
 	 * should be automatically deleted after 30 days.

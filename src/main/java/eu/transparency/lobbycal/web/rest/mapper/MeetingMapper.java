@@ -28,21 +28,23 @@ public interface MeetingMapper {
 	@Mapping(source = "user.lastName", target = "userLastName")
 	@Mapping(source = "submitter", target = "submitter", ignore = true)
 	@Mapping(source = "aliasUsed", target = "aliasUsed", ignore = true)
-	@Mapping(source = "uid", target = "uid")
+	@Mapping(source = "uid", target = "uid", ignore=true)
 	@Mapping(source = "mTag", target = "mTag")
 	@Mapping(source = "tags", target = "tags")
 	@Mapping(source = "mPartner", target = "mPartner")
 	@Mapping(source = "partners", target = "partners")
+	@Mapping(source = "createdDate", target = "createdDate")
 	MeetingDTO meetingToMeetingDTO(Meeting meeting);
 
 	@Mapping(target = "submitter", source = "submitter", ignore = true)
 	@Mapping(target = "aliasUsed", source = "aliasUsed", ignore = true)
-	@Mapping(target = "uid", source = "uid")
+	@Mapping(target = "uid", source = "uid", ignore= true)
 	@Mapping(target = "mTag", source = "mTag")
 	@Mapping(target = "tags", source = "tags")
 	@Mapping(target = "mPartner", source = "mPartner")
 	@Mapping(target = "partners", source = "partners")
 	@Mapping(source = "userId", target = "user")
+	@Mapping(source = "createdDate", target = "createdDate")
 	Meeting meetingDTOToMeeting(MeetingDTO meetingDTO);
     
 	

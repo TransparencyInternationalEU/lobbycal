@@ -41,7 +41,7 @@ public class PersistentAuditEvent  {
 
     @ElementCollection
     @MapKeyColumn(name="name")
-    @Column(name="value")
+    @Column(name="value", length=2500)
     @CollectionTable(name="JHI_PERSISTENT_AUDIT_EVT_DATA", joinColumns=@JoinColumn(name="event_id"))
     private Map<String, String> data = new HashMap<>();
 

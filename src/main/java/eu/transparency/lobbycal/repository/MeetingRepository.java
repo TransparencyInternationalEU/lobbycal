@@ -1,5 +1,6 @@
 package eu.transparency.lobbycal.repository;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -17,17 +18,8 @@ import eu.transparency.lobbycal.domain.Meeting;
  */
 public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
-	@Query("select meeting from Meeting meeting where meeting.user.login = ?#{principal.username} order by meeting.startDate desc ")
-	List<Meeting> findAllForCurrentUser();
-
 	@Query("select meeting from Meeting meeting where meeting.user.login = ?#{principal.username} order by meeting.startDate desc")
 	Page<Meeting> findAllForCurrentUser(Pageable pageable);
-
-	@Query("select meeting from Meeting meeting where meeting.user.login = ?#{principal.username} and meeting.startDate > current_date order by meeting.startDate desc")
-	Page<Meeting> findAllFutureForCurrentUser(Pageable pageable);
-
-	@Query("select meeting from Meeting meeting where meeting.user.login = ?#{principal.username} and meeting.startDate < current_date order by meeting.startDate desc")
-	Page<Meeting> findAllPastForCurrentUser(Pageable pageable);
 
 	@Query("select meeting from Meeting meeting order by meeting.startDate desc")
 	Page<Meeting> findAll(Pageable pageable);
@@ -52,6 +44,15 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
 
 	@Query("select meeting from Meeting meeting where meeting.user.id =:id order by meeting.startDate desc ")
 	Page<Meeting> getForMEP(Pageable pageable, @Param("id") Long id);
+
+	/**
+	 * 
+	 * @param id
+	 * @param offset after 
+	 * @return
+	 */
+	@Query("select meeting from Meeting meeting where meeting.user.id =:id AND meeting.createdDate > :offset order by meeting.startDate desc")
+	List<Meeting> getMeetingsForMEPAfter(@Param("id") Long id, @Param("offset") ZonedDateTime offset);
 
 	Optional<Meeting> findOneByUid(String uid);
 	

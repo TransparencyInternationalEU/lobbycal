@@ -20,4 +20,6 @@ public interface CalendarDTRepository<T, ID extends Serializable>
 	@Transactional(readOnly = true)
 	DataTablesOutput<T> findAll(DataTablesInput input);
 
+	DataTablesOutput<T> findAllForOne(DataTablesInput input, Specification<T> additionalSpecification, boolean future);
+
 }

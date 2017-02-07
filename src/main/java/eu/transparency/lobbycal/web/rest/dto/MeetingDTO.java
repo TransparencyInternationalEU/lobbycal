@@ -71,6 +71,8 @@ public class MeetingDTO implements Serializable {
 	@JsonView(DataTablesOutput.View.class)
 	private String mPartner;
 
+	private ZonedDateTime createdDate;
+
 	public String getmTag() {
 
 		return mTag;
@@ -220,6 +222,17 @@ public class MeetingDTO implements Serializable {
 
 		this.userLogin = userLogin;
 	}
+	
+	
+
+	 public ZonedDateTime getCreatedDate() {
+	        return createdDate;
+	    }
+
+	    public void setCreatedDate(ZonedDateTime createdDate) {
+	        this.createdDate = createdDate;
+	    }
+
 
 	@Override
 	public boolean equals(Object o) {

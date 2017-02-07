@@ -17,11 +17,15 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * A Meeting.
@@ -54,6 +58,15 @@ public class Meeting implements Serializable {
 	@Column(name = "end_date")
 	private ZonedDateTime endDate;
 
+	
+	@CreatedDate
+    @NotNull
+    @Column(name = "created_date", nullable = false)
+    @JsonIgnore
+    private ZonedDateTime createdDate = ZonedDateTime.now();
+
+	
+	
 	@Column(name = "u_id")
 	private String uid;
 
@@ -199,6 +212,15 @@ public class Meeting implements Serializable {
 
 		this.user = user;
 	}
+	
+	 public ZonedDateTime getCreatedDate() {
+	        return createdDate;
+	    }
+
+	    public void setCreatedDate(ZonedDateTime createdDate) {
+	        this.createdDate = createdDate;
+	    }
+
 
 	@Override
 	public boolean equals(Object o) {

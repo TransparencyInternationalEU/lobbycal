@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.elasticsearch.index.query.QueryBuilder;
 import org.mapstruct.Mapping;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ public interface SubmitterRepository extends JpaRepository<Submitter, Long> {
 
 	@Query("select submitter from Submitter submitter where submitter.user.login = ?#{principal.username}")
 	List<Submitter> findAllForCurrentUser();
+
 	
 	@Query("select submitter from Submitter submitter where submitter.user.login = ?#{principal.username}")
 	Page<Submitter> findAllForCurrentUser(Pageable pageable);

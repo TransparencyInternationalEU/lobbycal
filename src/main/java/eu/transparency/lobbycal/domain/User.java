@@ -67,6 +67,29 @@ public class User extends AbstractAuditingEntity implements Serializable {
 	@Column(nullable = false)
 	private boolean activated = false;
 
+	@JsonIgnore
+	@Column(nullable = false)
+	private boolean notificationEnabled = true;
+
+	@JsonIgnore
+	@Column(nullable = false)
+	private boolean notificationOfSubmittersEnabled = true;
+
+	@JsonIgnore
+	@Column(name = "last_notified", nullable = true)
+	private ZonedDateTime lastNotified = null;
+
+	
+	@JsonIgnore
+	@Column(nullable = false)
+	private boolean showFutureMeetings = false;
+
+	
+	@JsonIgnore
+	@Column(nullable = false)
+	private boolean lobbycloudSharingEnabled = false;
+
+	
 	@Size(min = 2, max = 5)
 	@Column(name = "lang_key", length = 5)
 	private String langKey;
@@ -100,6 +123,18 @@ public class User extends AbstractAuditingEntity implements Serializable {
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
 	private Set<Meeting> meetings = new HashSet<>();
+
+	public boolean isShowFutureMeetings() {
+	
+		return showFutureMeetings;
+	}
+
+
+	public void setShowFutureMeetings(boolean showFutureMeetings) {
+	
+		this.showFutureMeetings = showFutureMeetings;
+	}
+
 
 	public Long getId() {
 		return id;
@@ -228,15 +263,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
 		return login.hashCode();
 	}
 
-	@Override
-	public String toString() {
-		return "User{" + "login='" + login + '\'' + ", password='" + password
-				+ '\'' + ", firstName='" + firstName + '\'' + ", lastName='"
-				+ lastName + '\'' + ", email='" + email + '\''
-				+ ", activated='" + activated + '\'' + ", langKey='" + langKey
-				+ '\'' + ", activationKey='" + activationKey + '\'' + "}";
-	}
-
+	
 	public Set<Alias> getAliases() {
 		return aliases;
 	}
@@ -244,4 +271,75 @@ public class User extends AbstractAuditingEntity implements Serializable {
 	public void setAliases(Set<Alias> aliases) {
 		this.aliases = aliases;
 	}
+
+
+	
+	public boolean isNotificationEnabled() {
+	
+		return notificationEnabled;
+	}
+
+
+	
+	public void setNotificationEnabled(boolean notificationEnabled) {
+	
+		this.notificationEnabled = notificationEnabled;
+	}
+
+
+	
+	public boolean isNotificationOfSubmittersEnabled() {
+	
+		return notificationOfSubmittersEnabled;
+	}
+
+
+	
+	public void setNotificationOfSubmittersEnabled(boolean notificationOfSubmittersEnabled) {
+	
+		this.notificationOfSubmittersEnabled = notificationOfSubmittersEnabled;
+	}
+
+
+	
+	public ZonedDateTime getLastNotified() {
+	
+		return lastNotified;
+	}
+
+
+	
+	public void setLastNotified(ZonedDateTime lastNotified) {
+	
+		this.lastNotified = lastNotified;
+	}
+
+
+	
+	public boolean isLobbycloudSharingEnabled() {
+	
+		return lobbycloudSharingEnabled;
+	}
+
+
+	
+	public void setLobbycloudSharingEnabled(boolean lobbycloudSharingEnabled) {
+	
+		this.lobbycloudSharingEnabled = lobbycloudSharingEnabled;
+	}
+
+
+	@Override
+	public String toString() {
+
+		return "User [id=" + id + ", login=" + login + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", email=" + email + ", activated=" + activated + ", showFutureMeetings=" + showFutureMeetings
+				+ ", langKey=" + langKey + ", activationKey=" + activationKey 
+				+ ", resetDate=" + resetDate + ", notificationEnabled=" + notificationEnabled
+				+ ", notificationOfSubmittersEnabled=" + notificationOfSubmittersEnabled 
+				+ ", lobbycloudSharingEnabled=" + lobbycloudSharingEnabled + ", lastNotified="
+				+ lastNotified + "]";
+	}
+
+
 }
