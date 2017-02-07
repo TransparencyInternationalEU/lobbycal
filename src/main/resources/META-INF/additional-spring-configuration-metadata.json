@@ -1,0 +1,137 @@
+{"properties": [
+  {
+    "name": "lobbycal.meetings.delivery",
+    "type": "java.lang.String",
+    "description": "A description for 'lobbycal.meetings.delivery'"
+  },
+  {
+    "name": "lobbycal.lobbycloud.active",
+    "type": "java.lang.String",
+    "description": "A description for 'lobbycal.lobbycloud.active'"
+  },
+  {
+    "name": "lobbycal.lobbycloud.send-to",
+    "type": "java.lang.String",
+    "description": "A description for 'lobbycal.lobbycloud.send-to'"
+  },
+  {
+    "name": "lobbycal.lobbycloud.trigger-url",
+    "type": "java.lang.String",
+    "description": "A description for 'lobbycal.lobbycloud.trigger-url'"
+  },
+  {
+    "name": "lobbycal.lobbycloud.tag",
+    "type": "java.lang.String",
+    "description": "A description for 'lobbycal.lobbycloud.tag'"
+  },
+  {
+    "name": "lobbycal.meetings.full-list-uRL",
+    "type": "java.lang.String",
+    "description": "A description for 'lobbycal.meetings.full-list-uRL'"
+  },
+  {
+    "name": "lobbycal.meetings.reminder.no-new-meeting.since-last-days",
+    "type": "java.lang.String",
+    "description": "A description for 'lobbycal.meetings.reminder.no-new-meeting.since-last-days'"
+  },
+  {
+    "name": "catchall.mail.host",
+    "type": "java.lang.String",
+    "description": "A description for 'catchall.mail.host'"
+  },
+  {
+    "name": "catchall.mail.username",
+    "type": "java.lang.String",
+    "description": "A description for 'catchall.mail.username'"
+  },
+  {
+    "name": "catchall.mail.password",
+    "type": "java.lang.String",
+    "description": "A description for 'catchall.mail.password'"
+  },
+  {
+    "name": "catchall.mail.nossl",
+    "type": "java.lang.String",
+    "description": "A description for 'catchall.mail.nossl'"
+  },
+  {
+    "name": "catchall.mail.port",
+    "type": "java.lang.String",
+    "description": "A description for 'catchall.mail.port'"
+  },
+  {
+    "name": "jhipster.cors.allowed-origins",
+    "type": "java.lang.String",
+    "description": "A description for 'jhipster.cors.allowed-origins'"
+  },
+  {
+    "name": "jhipster.cors.allowed-methods",
+    "type": "java.lang.String",
+    "description": "A description for 'jhipster.cors.allowed-methods'"
+  },
+  {
+    "name": "jhipster.cors.allowed-headers",
+    "type": "java.lang.String",
+    "description": "A description for 'jhipster.cors.allowed-headers'"
+  },
+  {
+    "name": "jhipster.cors.exposed-headers",
+    "type": "java.lang.String",
+    "description": "A description for 'jhipster.cors.exposed-headers'"
+  },
+  {
+    "name": "jhipster.cors.exposed-headers",
+    "type": "java.lang.String",
+    "description": "A description for 'jhipster.cors.exposed-headers'"
+  },
+  {
+    "name": "jhipster.cors.allow-credentials",
+    "type": "java.lang.String",
+    "description": "A description for 'jhipster.cors.allow-credentials'"
+  },
+  {
+    "name": "jhipster.cors.max-age",
+    "type": "java.lang.String",
+    "description": "A description for 'jhipster.cors.max-age'"
+  },
+  {
+    "name": "mail.host",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.host'"
+  },
+  {
+    "name": "mail.protocol",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.protocol'"
+  },
+  {
+    "name": "mail.password",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.password'"
+  },
+  {
+    "name": "mail.username",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.username'"
+  },
+  {
+    "name": "mail.port",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.port'"
+  },
+  {
+    "name": "mail.tls",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.tls'"
+  },
+  {
+    "name": "mail.auth",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.auth'"
+  },
+  {
+    "name": "mail.from",
+    "type": "java.lang.String",
+    "description": "A description for 'mail.from'"
+  }
+]}
