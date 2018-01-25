@@ -123,3 +123,4 @@ Desktop.ini
 !gradle/wrapper/gradle-wrapper.jar
 /elasticsearch/
 /data/
+/target/
