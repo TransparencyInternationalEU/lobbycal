@@ -1,6 +1,7 @@
 package eu.transparency.lobbycal.web.rest.dto;
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -120,6 +121,11 @@ public class UserDTO {
 		this.lobbycloudSharingEnabled = lobbycloudSharingEnabled;
 		log.trace("" + this.id);
 
+	}
+
+	public UserDTO(String string, String string2, String string3, String string4, String string5, boolean b,
+			String string6, HashSet hashSet, Object object) {
+		// TODO Auto-generated constructor stub
 	}
 
 	public String getFirstName() {

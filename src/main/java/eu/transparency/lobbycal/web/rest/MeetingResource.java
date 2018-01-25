@@ -291,7 +291,7 @@ public class MeetingResource {
 	DataTablesInput input) throws URISyntaxException {
 
 		SearchParameter sp = input.getSearch();
-		log.debug("terms: " + " " + sp.getValue() + " \n\t ids:   " + ids);
+		log.debug("terms: " + " " + sp.getValue() + " \n\t\t\t ids:   " + ids);
 		DataTablesOutput<Meeting> dto = null;
 
 		Collection<Long> mepIds = new ArrayList<Long>();
@@ -303,7 +303,7 @@ public class MeetingResource {
 			}
 		}
 
-		log.info("retrieving meetings for " + mepIds.size() + " users");
+		log.trace("retrieving meetings for " + mepIds.size() + " users");
 		String sf = sp.getValue().toLowerCase();
 		if (mepIds.size() == 1) {
 			User rUser = userRepository.findOneById(((Long)mepIds.toArray()[0])).get();

@@ -35,6 +35,7 @@
 	<logger name="net.sf.ehcache" level="ERROR" />
 	<logger name="org.eclipse" level="ERROR" />
 	<logger name="eu.transparency.lobbycal" level="DEBUG" />
+	<logger name="eu.transparency.lobbycal.service.MailFetcherService" level="DEBUG" />
 	<logger name="eu.transparency.lobbycal.aop.logging.LoggingAspect"
 		level="INFO" />
 	<logger name="eu.transparency.lobbycal.web.rest.mapper.*" level="INFO" />

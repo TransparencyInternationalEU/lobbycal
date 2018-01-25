@@ -94,7 +94,7 @@ public class MailFetcherService {
 		}
 
 		ReceivedEmail[] emails = session.receiveEmailAndMarkSeen(EmailFilter.filter().flag(Flags.Flag.SEEN, false));
-		log.trace("Mails to process " + session.getUnreadMessageCount());
+		log.info("Mails to process " + session.getUnreadMessageCount());
 
 		try {
 			if (emails == null) {

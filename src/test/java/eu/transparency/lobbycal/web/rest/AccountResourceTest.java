@@ -232,7 +232,7 @@ public class AccountResourceTest {
 		// Duplicate login, different e-mail
 		UserDTO dup = new UserDTO(u.getLogin(), u.getPassword(), u.getLogin(),
 				u.getLastName(), "alicejr@example.com", true, u.getLangKey(),
-				u.getAuthorities(), null);
+				u.getAuthorities(), null, false, false, false, null, false);
 
 		// Good user
 		restMvc.perform(
@@ -269,7 +269,7 @@ public class AccountResourceTest {
 		// Duplicate e-mail, different login
 		UserDTO dup = new UserDTO("johnjr", u.getPassword(), u.getLogin(),
 				u.getLastName(), u.getEmail(), true, u.getLangKey(),
-				u.getAuthorities(), null);
+				u.getAuthorities(), null, false, false, false, null, false);
 
 		// Good user
 		restMvc.perform(

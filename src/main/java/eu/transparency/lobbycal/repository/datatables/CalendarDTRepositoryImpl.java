@@ -160,7 +160,7 @@ public class CalendarDTRepositoryImpl<T, ID extends Serializable> extends Simple
 
 		List<Order> orders = new ArrayList<Order>();
 		for (OrderParameter order : input.getOrder()) {
-			log.debug("order column: " + order.getColumn() + "");
+			log.trace("order column: " + order.getColumn() + "");
 			ColumnParameter column = input.getColumns().get(order.getColumn());
 			if (column.getOrderable()) {
 				String sortColumn = column.getData();

@@ -120,7 +120,7 @@ public final class MeetingSpecifications {
 	}
 
 	public static Specification<Meeting> past() {
-		log.info("past only");
+		log.trace("past only");
 		return new Specification<Meeting>() {
 			@Override
 			public Predicate toPredicate(Root<Meeting> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
