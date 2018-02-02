@@ -106,6 +106,29 @@ In method `doFilterInternal(HttpServletRequest request, HttpServletResponse resp
 `response.setHeader("Access-Control-Max-Age", "86400"); // 24 Hours`
 `response.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-auth-token");`
 
+
+
+## Show meetings of all users
+
+After registration you should have received an email with your personal API URL.
+
+It should be similar to 
+
+`http://our-lobbycal-server.org/api/meetings/dt/100`
+
+To display all meetings published by that lobbycal server instance, simply remove the id at the end of the URL
+
+`http://our-lobbycal-server.org/api/meetings/dt`
+
+For wordpress, this is done at the plugins settings page /wp-admin/options-general.php?page=lobbycal2press
+ 
+## Show meetings of selected users
+
+To display meetings of selected users, simply add ids of these users at the end of the URL, separated by comma.
+
+`http://our-lobbycal-server.org/api/meetings/dt/42,23`
+
+For wordpress, this is done at the plugins settings page /wp-admin/options-general.php?page=lobbycal2press 
 # Deactivation  & Deletion policy
 
 If a user is deactivated, emails related to the user account or one of his submitters are no longer processed. 
