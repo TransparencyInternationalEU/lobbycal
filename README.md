@@ -65,14 +65,25 @@ Currently no remote lookup takes place.
 
 # Technical information 
 
-## Deployment
-* you can skip tests 
- * mvn clean package -Pprod -Dmaven.test.skip=true -U
- * mvn package -Pprod -Dmaven.test.skip=true 
+## Installation requirement
+
+The application has a small resource consumption and should run fine on any machine with 2 GB RAM
+
+## Required software
+
+* lobbycal server java based. The latest JDK v8 must be installed
+* The persistence layer is driven by a MySQL Database. Database credentials need to be set in `application.properties`
+* Apache maven is required during the build process
+
+
+## Building from source 
  
- Make sur to set the spring profile
- spring.profiles.active=prod
- in catalina.properties
+ * `mvn clean package -Pprod -Dmaven.test.skip=true -U`
+ * `mvn package -Pprod -Dmaven.test.skip=true`
+
+## Running
+ 
+`java -jar lobbycal-3.1.8.war --spring.profiles.active=prod`
 
 ## Security
 * client side js validation / access restriction can be circumvented with some technical background. 
