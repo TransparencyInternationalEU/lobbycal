@@ -1,5 +1,7 @@
 # About lobbycal
 
+Please also refer [to the documentation as PDF](https://github.com/TransparencyInternationalEU/lobbycal/blob/master/doc/How%20to%20install%20LobbyCal%20and%20FAQ.pdf). 
+
 lobbycal helps groups to publish their meetings with lobbyists. 
 
 Each user sends a cc: email of the outlook / google calendar or other event invitations to the server component. 
@@ -65,7 +67,7 @@ Currently no remote lookup takes place.
 
 # Technical information 
 
-## Installation requirement
+## Installation requirements
 
 The application has a small resource consumption and should run fine on any machine with 2 GB RAM
 
