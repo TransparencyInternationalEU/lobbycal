@@ -74,7 +74,7 @@ The application has a small resource consumption and should run fine on any mach
 ## Required software
 
 * lobbycal server java based. The latest JDK v8 must be installed
-* The persistence layer is driven by a MySQL Database. Database credentials need to be set in `application.properties`
+* The persistence layer is driven by a MySQL Database. Database credentials need to be set in `application.properties`. We recommend MariaDB for better performance.
 * Apache maven is required during the build process
 
 
