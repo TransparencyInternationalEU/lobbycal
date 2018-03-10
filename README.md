@@ -8,7 +8,7 @@ Each user sends a cc: email of the outlook / google calendar or other event invi
 
 Via the wordpress plugin, the typo3 extension or on a static html page, the meetings of a user can be embedded on any website. 
 
-Only past meetings will be displayed. 
+Only past meetings will be displayed, unless otherwise configured in the user account on the lobbycal server.
 
 ## QUESTIONS
 
