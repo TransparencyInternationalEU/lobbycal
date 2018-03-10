@@ -46,7 +46,7 @@ The position of title, transparency register ID and tags /within the last ':' an
 
 ## Processing meeting invitations via email
 ### Control via Webmail
-Only thoes emails are porcessed that are located in the INBOX folder and have the UNSEEN flag. 
+Only those emails are processed that are located in the INBOX folder and have the UNSEEN flag. 
 Reprocessing of the original invitation can be triggered by marking an email as unread.
 
 
@@ -60,7 +60,7 @@ Partner entries will be shared. Curation of entries is admins responsibility.
 The first time an ID comes in it will be stored in the database. 
 Partner ID rules over Partner name. 
 Subsequent meeting with the same partner ID will be assigned the existing partner entry in the database. 
-Partners are referenced, which means, if a partner entry is changed, i.e. name overwrite, this assignment will take affect on all meetings related to this partner id.
+Partners are referenced, which means, if a partner entry is changed, i.e. name overwrite, this assignment will take effect on all meetings related to this partner id.
 
 Currently no remote lookup takes place.
 
